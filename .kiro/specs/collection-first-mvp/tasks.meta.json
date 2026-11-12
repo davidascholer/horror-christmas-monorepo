@@ -1,0 +1,384 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Create the agreed web/API/shared-code/Prisma project boundaries and document their responsibilities.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450066360
+      },
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450077676
+      },
+      {
+        "executionId": "3b611c99-10b8-4476-8b56-b0fb56593c6d",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450680434
+      },
+      {
+        "executionId": "3b611c99-10b8-4476-8b56-b0fb56593c6d",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794452922243
+      }
+    ],
+    "1.2 Define API-level shared types and service boundaries from the approved contracts without inventing fields not supported by the source contract.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450066444
+      },
+      {
+        "executionId": "3b611c99-10b8-4476-8b56-b0fb56593c6d",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794452926729
+      },
+      {
+        "executionId": "3b611c99-10b8-4476-8b56-b0fb56593c6d",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794453359712
+      }
+    ],
+    "1.3 Add and run foundation checks for the selected project structure and test commands; record explicit decisions still needing owner approval.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450066506
+      },
+      {
+        "executionId": "3b611c99-10b8-4476-8b56-b0fb56593c6d",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794453363987
+      },
+      {
+        "executionId": "3b611c99-10b8-4476-8b56-b0fb56593c6d",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794455103582
+      }
+    ],
+    "2.1 Implement Collection, Movie, Character, Product, Franchise, Tag, AffiliateLink, Watchlist, WatchlistMovie, publishing status, slugs, timestamps, indexes, and fixed-precision product price/currency fields.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450066553
+      },
+      {
+        "executionId": "3b611c99-10b8-4476-8b56-b0fb56593c6d",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794455109927
+      },
+      {
+        "executionId": "3b611c99-10b8-4476-8b56-b0fb56593c6d",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794455209560
+      }
+    ],
+    "2.2 Implement every explicit join model, composite uniqueness, sort/order and curator-note fields, directed related-collection relation, and documented cascade/set-null behavior.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450066595
+      },
+      {
+        "executionId": "3b611c99-10b8-4476-8b56-b0fb56593c6d",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794455214112
+      },
+      {
+        "executionId": "3b611c99-10b8-4476-8b56-b0fb56593c6d",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794455280334
+      }
+    ],
+    "2.3 Create and apply migrations to a disposable development/test database; test schema constraints, optional relationships, ordering, price precision, and status values.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450066635
+      },
+      {
+        "executionId": "3b611c99-10b8-4476-8b56-b0fb56593c6d",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794455585950
+      },
+      {
+        "executionId": "3b611c99-10b8-4476-8b56-b0fb56593c6d",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794496643978
+      }
+    ],
+    "2.4 Add domain/API serialization tests proving that money retains decimal precision and currency and that public routes use slugs rather than internal IDs.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450066679
+      },
+      {
+        "executionId": "3b611c99-10b8-4476-8b56-b0fb56593c6d",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794496648560
+      },
+      {
+        "executionId": "de0f1d4a-988b-423d-80a7-e47bc4bed2a0",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794509548545
+      },
+      {
+        "executionId": "2b4f4fa5-07b2-402e-a335-a77a15dbf864",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794512765347
+      },
+      {
+        "executionId": "2b4f4fa5-07b2-402e-a335-a77a15dbf864",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794512983011
+      }
+    ],
+    "3.1 Implement validation for required collection introduction, curator notes, hero image/alt text, SEO metadata, at least one movie, and at least one related collection; validate SEO title/description for every launch entity.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450066714
+      }
+    ],
+    "3.2 Create all ten named launch collections and make their collection types, sequence/order, curator guidance, and related-collection relationships explicit.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450066750
+      }
+    ],
+    "3.3 Seed at least 50 movies, 20 characters, 50 products, 5 franchises, and 20 tags; include the named example characters, franchises, and product categories in the requirements.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450066786
+      }
+    ],
+    "3.4 Verify all collection/entity relationships, missing-membership editorial warnings, recommended 5–15 collection item guidance, statuses, slugs, and launch metadata with seed-data tests.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450066822
+      }
+    ],
+    "4.1 Implement published-only list/detail queries, stable slug routes, documented filters, ordered relationships, null handling, ISO-8601 timestamps, and 404 behavior.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450066858
+      }
+    ],
+    "4.2 Implement `GET /home` with the exact HomeResponse field names and nullable featured movie/character/gift collection.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450066892
+      }
+    ],
+    "4.3 Implement all collection, movie, character, and product routes and their source-defined detail projections, including related content and affiliate destinations.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450066923
+      }
+    ],
+    "4.4 Add API contract tests for every method/path, optional query parameter, status behavior, serialized response shape, public content boundary, and decimal-safe product price representation.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450066957
+      }
+    ],
+    "5.1 Implement `GET /search?q={query}` with the exact SearchResult fields, published-only records, and empty results for empty/whitespace queries.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450066994
+      }
+    ],
+    "5.2 Add tests proving category ordering is collections, movies, characters, products for mixed matches and that slugs/IDs/summaries are serialized correctly.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067025
+      }
+    ],
+    "6.1 Fetch published slugs from `/build/collections`, `/build/movies`, `/build/characters`, and `/build/products`, then retrieve their public page models.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067057
+      }
+    ],
+    "6.2 Generate complete static HTML/routes for each published collection, movie, character, and product from shared page templates; do not use Next.js or runtime rendering.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067088
+      }
+    ],
+    "6.3 Generate page titles, meta descriptions with the documented fallback order, canonical URLs, Open Graph metadata, and appropriate Schema.org data.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067115
+      }
+    ],
+    "6.4 Generate `/sitemap.xml` and `robots.txt` from published content, including the administrative-route exclusion.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067149
+      }
+    ],
+    "6.5 Implement internal-link priorities, responsive/WebP/lazy image delivery hooks and fallback behavior; make missing collections emit a build warning and publication errors fail validation.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067181
+      }
+    ],
+    "6.6 Test static routes, metadata, structured data, sitemap/robots output, fallback behavior, unpublished-content exclusion, and availability of generated pages with the API stopped after build.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067222
+      }
+    ],
+    "7.1 Build the homepage with hero, featured/seasonal collections, featured character/movie, and gift discovery from the homepage API projection.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067253
+      }
+    ],
+    "7.2 Build collection pages with ordered content, collection context/curator guidance, related collections, and useful next-step links.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067290
+      }
+    ],
+    "7.3 Build movie, character, and product pages with their required details, related relationships, collection links, trailers/images, and affiliate destinations where available.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067323
+      }
+    ],
+    "7.4 Build unified search interaction against the search API and ensure collection-priority results remain clear and navigable.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067374
+      }
+    ],
+    "7.5 Verify responsive layouts, keyboard/accessibility behavior, image alt text/fallbacks, static page usability before client interaction, and collection-first navigation across the documented user flows.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067409
+      }
+    ],
+    "8.1 Implement all five watchlist routes, random unguessable token generation, optional title, bearer read/write access, and request-body validation.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067445
+      }
+    ],
+    "8.2 Implement add/remove/complete operations with ordered movie details, completion timestamps, duplicate prevention, and transactional ordering on insert/remove/reindex; do not add a client reorder route without owner-approved API shape.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067506
+      }
+    ],
+    "8.3 Build watchlist creation, viewing, editing, completion, and sharing interactions; use only the share token in public share URLs.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067536
+      }
+    ],
+    "8.4 Add API, transaction, authorization-capability, URL privacy, request validation, and UI tests; verify production rate limiting is configured without requiring user accounts.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067572
+      }
+    ],
+    "9.1 Emit collection, movie, character, and product view events; capture collection shares/time, collection-to-entity and related-collection navigation, and search usage.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067605
+      }
+    ],
+    "9.2 Emit watchlist created/shared and affiliate-click events, including collection origin when available; support pages/session and returning/seasonal visit measures.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067638
+      }
+    ],
+    "9.3 Test event emission and payload source attribution and document the analytics-provider decision as open if none has been approved.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067671
+      }
+    ],
+    "10.1 Run affected-unit and whole-solution builds and tests; verify no warnings/errors are left in touched units and document any environment-dependent check.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067705
+      }
+    ],
+    "10.2 Re-run inventory and editorial checks for all named collections and minimum entity counts, collection completeness, SEO title/description coverage, collection hero/alt text, and curator notes.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067738
+      }
+    ],
+    "10.3 Review performance, accessibility, SEO, mobile responsiveness, static generation, analytics, functional search/watchlists, and affiliate-link operation; record evidence and any accepted limitation.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067773
+      }
+    ],
+    "10.4 Walk through homepage discovery, search discovery, character and product discovery, anonymous watchlist creation/sharing, seasonal collection use, and return exploration end-to-end.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067804
+      }
+    ],
+    "10.5 Confirm MVP exclusions remain absent and evaluate success using collection engagement, multi-page exploration, watchlists, returning visits, search use, organic traffic, and contextual affiliate clicks.": [
+      {
+        "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794450067840
+      }
+    ],
+    "1. Establish the separate React + TypeScript + Vite web application, Node.js + TypeScript API application, shared API/domain contracts, repository tooling, and a repeatable local development/test workflow; do not select unapproved package versions, backend framework, CMS, deployment provider, or runtime configuration.": [
+      {
+        "executionId": "3b611c99-10b8-4476-8b56-b0fb56593c6d",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794455103624
+      }
+    ],
+    "2. Implement the PostgreSQL/Prisma knowledge graph and verify its integrity before loading launch content.": [
+      {
+        "executionId": "2b4f4fa5-07b2-402e-a335-a77a15dbf864",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794512983080
+      }
+    ]
+  }
+}

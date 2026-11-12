@@ -37,20 +37,20 @@ Work through these phases sequentially. Do not start a later phase until the pre
 
 ### Phase 1 — Foundation and contracts
 
-- [ ] 1. Establish the separate React + TypeScript + Vite web application, Node.js + TypeScript API application, shared API/domain contracts, repository tooling, and a repeatable local development/test workflow; do not select unapproved package versions, backend framework, CMS, deployment provider, or runtime configuration.
-  - [ ] 1.1 Create the agreed web/API/shared-code/Prisma project boundaries and document their responsibilities.
-  - [ ] 1.2 Define API-level shared types and service boundaries from the approved contracts without inventing fields not supported by the source contract.
-  - [ ] 1.3 Add and run foundation checks for the selected project structure and test commands; record explicit decisions still needing owner approval.
+- [x] 1. Establish the separate React + TypeScript + Vite web application, Node.js + TypeScript API application, shared API/domain contracts, repository tooling, and a repeatable local development/test workflow; do not select unapproved package versions, backend framework, CMS, deployment provider, or runtime configuration.
+  - [x] 1.1 Create the agreed web/API/shared-code/Prisma project boundaries and document their responsibilities.
+  - [x] 1.2 Define API-level shared types and service boundaries from the approved contracts without inventing fields not supported by the source contract.
+  - [x] 1.3 Add and run foundation checks for the selected project structure and test commands; record explicit decisions still needing owner approval.
   
   _Requirements: Requirement 1 (criteria 1.1–1.4); Requirement 10 (criteria 10.1–10.8); Requirement 11 (criterion 11.1); Requirement 15 (criterion 15.3); Requirement 16 (criteria 16.1–16.5)._
 
 ### Phase 2 — Relational domain model
 
-- [ ] 2. Implement the PostgreSQL/Prisma knowledge graph and verify its integrity before loading launch content.
-  - [ ] 2.1 Implement Collection, Movie, Character, Product, Franchise, Tag, AffiliateLink, Watchlist, WatchlistMovie, publishing status, slugs, timestamps, indexes, and fixed-precision product price/currency fields.
-  - [ ] 2.2 Implement every explicit join model, composite uniqueness, sort/order and curator-note fields, directed related-collection relation, and documented cascade/set-null behavior.
-  - [ ] 2.3 Create and apply migrations to a disposable development/test database; test schema constraints, optional relationships, ordering, price precision, and status values.
-  - [ ] 2.4 Add domain/API serialization tests proving that money retains decimal precision and currency and that public routes use slugs rather than internal IDs.
+- [x] 2. Implement the PostgreSQL/Prisma knowledge graph and verify its integrity before loading launch content.
+  - [x] 2.1 Implement Collection, Movie, Character, Product, Franchise, Tag, AffiliateLink, Watchlist, WatchlistMovie, publishing status, slugs, timestamps, indexes, and fixed-precision product price/currency fields.
+  - [x] 2.2 Implement every explicit join model, composite uniqueness, sort/order and curator-note fields, directed related-collection relation, and documented cascade/set-null behavior.
+  - [x] 2.3 Create and apply migrations to a disposable development/test database; test schema constraints, optional relationships, ordering, price precision, and status values.
+  - [x] 2.4 Add domain/API serialization tests proving that money retains decimal precision and currency and that public routes use slugs rather than internal IDs.
   
   _Requirements: Requirement 4 (criteria 4.7–4.8); Requirement 5 (criteria 5.1–5.5); Requirement 11 (criteria 11.1–11.8)._
 
