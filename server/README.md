@@ -99,6 +99,30 @@ npm run prisma:migrate    # Run migrations
 npm run prisma:studio     # Open Prisma Studio
 ```
 
+## Publishing the seed catalog (local development)
+
+Seeding (`npm run seed`) always creates DRAFT content. Publishing is a separate, deliberate step:
+
+```bash
+npm run seed:publish -- --dry-run   # show what would be published, write nothing
+npm run seed:publish                # publish the seed records that pass validation
+npm run verify:published            # call every public endpoint through the dev HTTP API
+```
+
+What `seed:publish` does (`prisma/publish-seed.ts`, logic in `src/publishing/publish-seed.ts`):
+
+- Runs the publication validators (`src/validation/publication-validation.ts`) on every DRAFT seed Collection, Movie, Character and Product. Passing records become PUBLISHED with `publishedAt` set to now; failing records stay DRAFT and are printed with the exact reasons. Nothing is weakened or bypassed.
+- Scope is the explicit slug allow-list taken from the seed files, never "every DRAFT row". Slugs with a test-fixture prefix (`zz-`, `t52`, `t43`, `e2e`, `test-`) are refused even if listed.
+- Only DRAFT rows are considered: PUBLISHED rows are untouched (an existing `publishedAt` is never overwritten) and ARCHIVED rows are never revived. Running it twice changes nothing.
+- Collections are decided last, because the static generator only links pages it builds: a collection also needs at least one member movie that will be published, and every related collection must be published too (resolved to a fixed point). A collection held back this way is reported with the reason.
+- Refuses to run unless `DATABASE_URL` points at `localhost`, `127.0.0.1` or `::1`. All reads and writes run in one transaction.
+
+To get back to a clean DRAFT baseline without touching the dev database, seed a scratch database (for example `CREATE DATABASE hc_scratch`, `DATABASE_URL=... npx prisma migrate deploy`, `DATABASE_URL=... npm run seed`) and run the suite with that `DATABASE_URL`.
+
+### Image placeholders (owner action before launch)
+
+The seed uses root-relative image paths (`/images/collections/*-hero.jpg`, `/images/movies/*-poster.jpg` and `*-hero.jpg`, `/images/characters/*.jpg`, `/images/products/*.jpg`). They pass the web build's URL rules (http(s) or root-relative) but no files exist at those paths yet, so published pages reference images that return 404 until the files are added under `web/public/images/` or the values are replaced with the object-storage URLs (R2 vs S3 is undecided). No CDN domain was invented and no image was downloaded. Product affiliate links and the Krampus trailer URL are also placeholders to review before launch.
+
 ## Directory Structure
 
 ```

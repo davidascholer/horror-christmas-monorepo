@@ -56,48 +56,49 @@ Work through these phases sequentially. Do not start a later phase until the pre
 
 ### Phase 3 — Editorial workflow and launch seed content
 
-- [ ] 3. Create launch seed data and editorial publication validation; pass the content inventory checkpoint before building public experiences.
-  - [ ] 3.1 Implement validation for required collection introduction, curator notes, hero image/alt text, SEO metadata, at least one movie, and at least one related collection; validate SEO title/description for every launch entity.
-  - [ ] 3.2 Create all ten named launch collections and make their collection types, sequence/order, curator guidance, and related-collection relationships explicit.
-  - [ ] 3.3 Seed at least 50 movies, 20 characters, 50 products, 5 franchises, and 20 tags; include the named example characters, franchises, and product categories in the requirements.
-  - [ ] 3.4 Verify all collection/entity relationships, missing-membership editorial warnings, recommended 5–15 collection item guidance, statuses, slugs, and launch metadata with seed-data tests.
+- [x] 3. Create launch seed data and editorial publication validation; pass the content inventory checkpoint before building public experiences.
+  - [x] 3.1 Implement validation for required collection introduction, curator notes, hero image/alt text, SEO metadata, at least one movie, and at least one related collection; validate SEO title/description for every launch entity.
+  - [x] 3.2 Create all ten named launch collections and make their collection types, sequence/order, curator guidance, and related-collection relationships explicit.
+  - [x] 3.3 Seed at least 50 movies, 20 characters, 50 products, 5 franchises, and 20 tags; include the named example characters, franchises, and product categories in the requirements.
+  - [x] 3.4 Verify all collection/entity relationships, missing-membership editorial warnings, recommended 5–15 collection item guidance, statuses, slugs, and launch metadata with seed-data tests.
+  - [x] 3.5 Complete any missing launch metadata in the seed content, then publish the seed catalog in the local development database so the public API and static generator operate on real PUBLISHED data; publish only records that pass the publication validators and report every record that cannot be published.
   
   _Requirements: Requirement 3 (criteria 3.1–3.8); Requirement 4 (criteria 4.1–4.6, 4.8); Requirement 5 (criteria 5.2–5.5); Requirement 6 (criteria 6.1–6.7); Requirement 12 (criteria 12.1–12.6); Requirement 17 (criteria 17.1–17.5)._
 
 ### Phase 4 — Public API and content projections
 
-- [ ] 4. Implement and contract-test the public homepage, collection, movie, character, and product APIs.
-  - [ ] 4.1 Implement published-only list/detail queries, stable slug routes, documented filters, ordered relationships, null handling, ISO-8601 timestamps, and 404 behavior.
-  - [ ] 4.2 Implement `GET /home` with the exact HomeResponse field names and nullable featured movie/character/gift collection.
-  - [ ] 4.3 Implement all collection, movie, character, and product routes and their source-defined detail projections, including related content and affiliate destinations.
-  - [ ] 4.4 Add API contract tests for every method/path, optional query parameter, status behavior, serialized response shape, public content boundary, and decimal-safe product price representation.
+- [x] 4. Implement and contract-test the public homepage, collection, movie, character, and product APIs.
+  - [x] 4.1 Implement published-only list/detail queries, stable slug routes, documented filters, ordered relationships, null handling, ISO-8601 timestamps, and 404 behavior.
+  - [x] 4.2 Implement `GET /home` with the exact HomeResponse field names and nullable featured movie/character/gift collection.
+  - [x] 4.3 Implement all collection, movie, character, and product routes and their source-defined detail projections, including related content and affiliate destinations.
+  - [x] 4.4 Add API contract tests for every method/path, optional query parameter, status behavior, serialized response shape, public content boundary, and decimal-safe product price representation.
   
   _Requirements: Requirement 2 (criteria 2.1–2.5); Requirement 4 (criteria 4.1–4.8); Requirement 9 (criterion 9.2); Requirement 10 (criteria 10.1–10.6, 10.8); Requirement 11 (criteria 11.2–11.7); Requirement 12 (criteria 12.1–12.6); Requirement 18 (criteria 18.1, 18.3)._
 
 ### Phase 5 — Collection-first search
 
-- [ ] 5. Implement PostgreSQL full-text search across the four MVP entity types and verify exact ranking behavior.
-  - [ ] 5.1 Implement `GET /search?q={query}` with the exact SearchResult fields, published-only records, and empty results for empty/whitespace queries.
-  - [ ] 5.2 Add tests proving category ordering is collections, movies, characters, products for mixed matches and that slugs/IDs/summaries are serialized correctly.
+- [x] 5. Implement PostgreSQL full-text search across the four MVP entity types and verify exact ranking behavior.
+  - [x] 5.1 Implement `GET /search?q={query}` with the exact SearchResult fields, published-only records, and empty results for empty/whitespace queries.
+  - [x] 5.2 Add tests proving category ordering is collections, movies, characters, products for mixed matches and that slugs/IDs/summaries are serialized correctly.
   
   _Requirements: Requirement 1 (criteria 1.1–1.3); Requirement 7 (criteria 7.1–7.5); Requirement 10 (criteria 10.1, 10.2, 10.6); Requirement 11 (criterion 11.6); Requirement 13 (criterion 13.3)._
 
 ### Phase 6 — Build-time static generation and SEO
 
-- [ ] 6. Implement the dedicated static content-generation pipeline using the Vite/React application, then validate the generated output independently of runtime API availability.
-  - [ ] 6.1 Fetch published slugs from `/build/collections`, `/build/movies`, `/build/characters`, and `/build/products`, then retrieve their public page models.
-  - [ ] 6.2 Generate complete static HTML/routes for each published collection, movie, character, and product from shared page templates; do not use Next.js or runtime rendering.
-  - [ ] 6.3 Generate page titles, meta descriptions with the documented fallback order, canonical URLs, Open Graph metadata, and appropriate Schema.org data.
-  - [ ] 6.4 Generate `/sitemap.xml` and `robots.txt` from published content, including the administrative-route exclusion.
-  - [ ] 6.5 Implement internal-link priorities, responsive/WebP/lazy image delivery hooks and fallback behavior; make missing collections emit a build warning and publication errors fail validation.
-  - [ ] 6.6 Test static routes, metadata, structured data, sitemap/robots output, fallback behavior, unpublished-content exclusion, and availability of generated pages with the API stopped after build.
+- [x] 6. Implement the dedicated static content-generation pipeline using the Vite/React application, then validate the generated output independently of runtime API availability.
+  - [x] 6.1 Fetch published slugs from `/build/collections`, `/build/movies`, `/build/characters`, and `/build/products`, then retrieve their public page models.
+  - [x] 6.2 Generate complete static HTML/routes for each published collection, movie, character, and product from shared page templates; do not use Next.js or runtime rendering.
+  - [x] 6.3 Generate page titles, meta descriptions with the documented fallback order, canonical URLs, Open Graph metadata, and appropriate Schema.org data.
+  - [x] 6.4 Generate `/sitemap.xml` and `robots.txt` from published content, including the administrative-route exclusion.
+  - [x] 6.5 Implement internal-link priorities, responsive/WebP/lazy image delivery hooks and fallback behavior; make missing collections emit a build warning and publication errors fail validation.
+  - [x] 6.6 Test static routes, metadata, structured data, sitemap/robots output, fallback behavior, unpublished-content exclusion, and availability of generated pages with the API stopped after build.
   
   _Requirements: Requirement 1 (criteria 1.1–1.4); Requirement 3 (criteria 3.1–3.8); Requirement 4 (criteria 4.1–4.8); Requirement 9 (criteria 9.1–9.8); Requirement 10 (criteria 10.1, 10.2); Requirement 11 (criteria 11.2, 11.6, 11.7); Requirement 12 (criteria 12.1, 12.2, 12.6); Requirement 15 (criteria 15.1, 15.2, 15.4); Requirement 17 (criterion 17.4); Requirement 18 (criteria 18.1–18.3)._
 
 ### Phase 7 — React visitor experience
 
 - [ ] 7. Build the public collection-first React experience on the approved Vite frontend and test its navigation and usability.
-  - [ ] 7.1 Build the homepage with hero, featured/seasonal collections, featured character/movie, and gift discovery from the homepage API projection.
+  - [x] 7.1 Build the homepage with hero, featured/seasonal collections, featured character/movie, and gift discovery from the homepage API projection.
   - [ ] 7.2 Build collection pages with ordered content, collection context/curator guidance, related collections, and useful next-step links.
   - [ ] 7.3 Build movie, character, and product pages with their required details, related relationships, collection links, trailers/images, and affiliate destinations where available.
   - [ ] 7.4 Build unified search interaction against the search API and ensure collection-priority results remain clear and navigable.

@@ -19,6 +19,7 @@ describe('Launch Collections', () => {
   beforeAll(async () => {
     collections = await prisma.collection.findMany({
       include: {
+        movies: true,
         relatedCollections: {
           include: {
             targetCollection: true,
@@ -143,9 +144,17 @@ describe('Launch Collections', () => {
       });
     });
 
-    it('all collections should be in DRAFT status', () => {
+    // Task 3.5: seeding still creates DRAFT, but `npm run seed:publish` publishes
+    // the dev database, so the status depends on whether that step has run.
+    // The intent (a valid, consistent lifecycle state) holds in both states.
+    it('all collections should have a valid status and a consistent publishedAt', () => {
       collections.forEach((collection) => {
-        expect(collection.status).toBe('DRAFT');
+        expect(['DRAFT', 'PUBLISHED']).toContain(collection.status);
+        if (collection.status === 'PUBLISHED') {
+          expect(collection.publishedAt).not.toBeNull();
+        } else {
+          expect(collection.publishedAt).toBeNull();
+        }
       });
     });
   });
@@ -255,12 +264,20 @@ describe('Launch Collections', () => {
       });
     });
 
-    it('all collections should still need movies before publication', () => {
+    // Task 3.5: was "all collections are DRAFT with publishedAt null". Movies are
+    // now seeded, so publication is allowed; what must stay true is that a
+    // collection is only PUBLISHED when it has the movie and the related
+    // collection the publication rules require, in either database state.
+    it('a collection is only published when it has movies and related collections', () => {
       collections.forEach((collection) => {
-        // Collections should be in DRAFT status
-        expect(collection.status).toBe('DRAFT');
-        // publishedAt should be null
-        expect(collection.publishedAt).toBeNull();
+        if (collection.status === 'PUBLISHED') {
+          expect(collection.publishedAt).not.toBeNull();
+          expect(collection.movies.length).toBeGreaterThanOrEqual(1);
+          expect(collection.relatedCollections.length).toBeGreaterThanOrEqual(1);
+        } else {
+          expect(collection.status).toBe('DRAFT');
+          expect(collection.publishedAt).toBeNull();
+        }
       });
     });
   });

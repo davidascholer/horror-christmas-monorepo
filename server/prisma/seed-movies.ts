@@ -42,7 +42,6 @@ export const movies: MovieSeedData[] = [
     runtime: 106,
     poster: '/images/movies/gremlins-poster.jpg',
     hero: '/images/movies/gremlins-hero.jpg',
-    trailerUrl: 'https://www.youtube.com/watch?v=220RH93پارک',
     seoTitle: 'Gremlins (1984) - Classic Christmas Horror Comedy',
     seoDescription: 'Joe Dante\'s 1984 creature feature comedy about Mogwai that spawn destructive Gremlins during Christmas in a small town.',
     featured: true,

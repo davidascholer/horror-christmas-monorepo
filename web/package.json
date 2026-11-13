@@ -6,22 +6,33 @@
   "description": "Horror Christmas - React + TypeScript + Vite frontend application",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && npm run build:client",
+    "build:client": "vite build",
+    "build:site": "npm run build:client && npm run build:static",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "build:static": "tsx scripts/generate-static.ts",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "verify:static-offline": "tsx scripts/verify-static-offline.ts"
   },
   "dependencies": {
+    "@tanstack/react-query": "5.107.1",
     "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "react-dom": "^19.3.1",
+    "react-router": "7.18.5"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "4.3.5",
+    "@types/node": "22.10.2",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^4.3.4",
     "jsdom": "^25.0.1",
+    "tailwindcss": "4.3.5",
+    "tsx": "4.19.2",
     "typescript": "^5.7.2",
     "vite": "^6.0.3",
     "vitest": "^2.1.8"

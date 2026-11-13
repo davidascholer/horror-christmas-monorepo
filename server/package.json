@@ -25,6 +25,8 @@
     "seed:characters": "tsx prisma/seed-characters.ts",
     "seed:products": "tsx prisma/seed-products.ts",
     "seed:relationships": "tsx prisma/seed-relationships.ts",
+    "seed:publish": "tsx prisma/publish-seed.ts",
+    "verify:published": "tsx scripts/verify-published.ts",
     "verify:collections": "tsx scripts/verify-collections.ts",
     "fixture:static-offline": "tsx scripts/static-offline-fixture.ts",
     "test:seed": "vitest run seed-verification"

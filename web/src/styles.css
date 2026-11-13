@@ -1,0 +1,278 @@
+/*
+ * Global stylesheet: Tailwind CSS v4 plus the site theme.
+ *
+ * Imported by src/entry-client.tsx, so `vite build` compiles it and the static
+ * generator links the result into every page (see README, "Architecture").
+ *
+ * Palette (Christmas + horror, dark only). Names are roles, never hex values
+ * in components. Contrast ratios are in web/README.md and are enforced by
+ * src/theme/contrast.test.ts, which reads this file.
+ *   ink    near-black page and surface colors
+ *   bone   off-white text
+ *   slime  toxic green: links, focus, primary accent (text safe on ink)
+ *   blood  red: buttons (bone text on top), borders, large text, decoration
+ */
+@import 'tailwindcss' source(none);
+
+/* Scan only the app's own source (not README.md, tests or other files that merely mention class names). */
+@source "./**/*.{ts,tsx}";
+@source not "./**/*.test.{ts,tsx}";
+
+@theme {
+  /* Surfaces */
+  --color-ink: #0a0a0b;
+  --color-surface: #131316;
+  --color-raised: #1c1c20;
+  --color-line: #34343a;
+
+  /* Text */
+  --color-bone: #f4f1ea;
+  --color-bone-muted: #b5b0a4;
+
+  /* Accent: slime green */
+  --color-slime: #7dff2e;
+  --color-slime-soft: #b4ff82;
+  --color-slime-deep: #2f7d14;
+
+  /* Accent: blood red. blood = buttons and borders; blood-glow = text on dark; blood-deep = pressed state */
+  --color-blood: #c1121f;
+  --color-blood-glow: #ff5a5f;
+  --color-blood-deep: #8f0d17;
+
+  /* System font stack. A brand/display font is an open design decision (OPEN-DECISIONS.md). */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji';
+
+  /*
+   * Motion. Use only behind `motion-safe:` (e.g. `motion-safe:animate-fade-up`),
+   * so visitors with prefers-reduced-motion get no animation. Keep flicker slow
+   * and low contrast: no more than a few changes per second (WCAG 2.3.1).
+   */
+  --animate-fade-up: fade-up 0.6s ease-out both;
+  --animate-flicker: flicker 3s ease-in-out infinite;
+  /* Hero snow: two layers falling at different speeds. Distance = one tile (see .hero-snow), so the loop is seamless. */
+  --animate-snow-far: snow-fall 60s linear infinite;
+  --animate-snow-near: snow-fall 36s linear infinite;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes snow-fall {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(var(--snow-tile, 320px));
+    }
+  }
+
+  @keyframes flicker {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    45% {
+      opacity: 0.85;
+    }
+    50% {
+      opacity: 0.6;
+    }
+    55% {
+      opacity: 0.9;
+    }
+  }
+}
+
+@layer base {
+  html {
+    background-color: var(--color-ink);
+    color: var(--color-bone);
+    color-scheme: dark;
+    font-family: var(--font-sans);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100vh;
+    background-color: var(--color-ink);
+    line-height: 1.6;
+  }
+
+  /* Visible focus for every interactive element, in the accent color. */
+  :focus-visible {
+    outline: 2px solid var(--color-slime);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background-color: var(--color-blood);
+    color: var(--color-bone);
+  }
+
+  /*
+   * Safety net behind `motion-safe:`: if anything animates without that guard,
+   * reduced-motion visitors still get (almost) no motion.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/*
+ * Page templates (src/pages) are plain semantic HTML without classes. Their
+ * look lives here, scoped to the shell's <main class="page-content">, so the
+ * markup stays untouched and the same on server and client.
+ */
+@layer components {
+  .page-content {
+    @apply mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12;
+  }
+
+  .page-content h1 {
+    @apply mb-4 text-3xl leading-tight font-bold tracking-tight text-bone sm:text-4xl;
+    overflow-wrap: anywhere;
+  }
+
+  .page-content h2 {
+    @apply mt-10 mb-3 border-b border-line pb-2 text-xl font-semibold text-bone;
+  }
+
+  .page-content article > header {
+    @apply mb-6;
+  }
+
+  .page-content article > header > p:first-of-type {
+    @apply text-sm tracking-wide text-bone-muted uppercase;
+  }
+
+  .page-content p {
+    @apply my-3 max-w-prose text-bone;
+  }
+
+  .page-content a {
+    @apply rounded-sm text-slime underline underline-offset-4 hover:text-slime-soft motion-safe:transition-colors;
+  }
+
+  .page-content img {
+    @apply my-4 h-auto max-h-96 w-full rounded-sm border border-line bg-surface object-contain;
+  }
+
+  .page-content dl {
+    @apply my-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm;
+  }
+
+  .page-content dt {
+    @apply text-bone-muted;
+  }
+
+  .page-content ul,
+  .page-content ol {
+    @apply my-3 space-y-3 pl-5;
+  }
+
+  .page-content ul {
+    @apply list-disc;
+  }
+
+  .page-content ol {
+    @apply list-decimal;
+  }
+
+  .page-content li::marker {
+    @apply text-blood-glow;
+  }
+
+  .page-content li > p {
+    @apply my-1 text-sm text-bone-muted;
+  }
+
+  .page-content code {
+    @apply rounded-sm bg-raised px-1 py-0.5 text-sm;
+  }
+}
+
+/*
+ * Homepage hero atmosphere (Task 7.1). CSS only: no image, no font, no script.
+ * Markup (HomePage.tsx): .hero-atmosphere > .hero-glow + .hero-snow + .hero-snow.hero-snow-near,
+ * all aria-hidden decoration behind the hero text.
+ *
+ *  - .hero-atmosphere: layered gradients (a blood-red glow top left, a faint slime-green one bottom right)
+ *    over ink fading to surface, plus a vignette (::after). The overlays stay dark, so bone text on any
+ *    point of the hero keeps its contrast (checked in src/theme/contrast.test.ts, "hero background").
+ *  - .hero-glow: a blood-red pulse behind the headline. Animated with `motion-safe:animate-flicker`
+ *    in the markup, so it is still under prefers-reduced-motion.
+ *  - .hero-snow: soft dots, tiled; the layer is one tile taller than the hero and slides down by exactly one
+ *    tile (`animate-snow-*`, motion-safe only), which loops without a jump. Compositor-only (transform).
+ *
+ * To restyle: change the colors (theme tokens) or opacity below; to remove the effect, delete the three divs.
+ */
+@layer components {
+  .hero-atmosphere {
+    position: absolute;
+    inset: 0;
+    z-index: -10;
+    overflow: hidden;
+    background:
+      radial-gradient(60rem 30rem at 12% -10%, color-mix(in srgb, var(--color-blood-deep) 30%, transparent), transparent 70%),
+      radial-gradient(44rem 26rem at 100% 110%, color-mix(in srgb, var(--color-slime-deep) 26%, transparent), transparent 70%),
+      linear-gradient(to bottom, var(--color-ink), var(--color-surface));
+  }
+
+  /* Vignette: darkens the edges. */
+  .hero-atmosphere::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, color-mix(in srgb, var(--color-ink) 75%, transparent) 100%);
+  }
+
+  .hero-glow {
+    position: absolute;
+    left: -10%;
+    top: -35%;
+    width: 70%;
+    height: 90%;
+    border-radius: 9999px;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--color-blood) 22%, transparent), transparent);
+    filter: blur(24px);
+  }
+
+  .hero-snow {
+    --snow-tile: 320px;
+    position: absolute;
+    inset: calc(var(--snow-tile) * -1) 0 0 0;
+    opacity: 0.55;
+    background-repeat: repeat;
+    background-size: var(--snow-tile) var(--snow-tile);
+    background-image:
+      radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--color-bone) 70%, transparent) 0 1.5px, transparent 2.5px),
+      radial-gradient(circle at 47% 7%, color-mix(in srgb, var(--color-bone) 55%, transparent) 0 1px, transparent 2px),
+      radial-gradient(circle at 78% 31%, color-mix(in srgb, var(--color-bone) 70%, transparent) 0 2px, transparent 3px),
+      radial-gradient(circle at 31% 52%, color-mix(in srgb, var(--color-bone) 55%, transparent) 0 1px, transparent 2px),
+      radial-gradient(circle at 90% 66%, color-mix(in srgb, var(--color-bone) 60%, transparent) 0 1.5px, transparent 2.5px),
+      radial-gradient(circle at 58% 81%, color-mix(in srgb, var(--color-bone) 70%, transparent) 0 2px, transparent 3px),
+      radial-gradient(circle at 6% 93%, color-mix(in srgb, var(--color-bone) 55%, transparent) 0 1px, transparent 2px);
+  }
+
+  /* Nearer layer: bigger tile, so it drifts at a different rate and the pattern does not read as one sheet. */
+  .hero-snow-near {
+    --snow-tile: 520px;
+    opacity: 0.4;
+    background-position: 130px 90px;
+  }
+}

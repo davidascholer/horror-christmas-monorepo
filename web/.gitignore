@@ -31,3 +31,6 @@ coverage/
 
 # Vite
 vite.config.ts.timestamp-*
+
+# Static page generator output (Task 6.2)
+dist-static/

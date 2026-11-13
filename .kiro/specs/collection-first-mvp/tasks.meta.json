@@ -140,6 +140,16 @@
         "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
         "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
         "timestamp": 1794450066714
+      },
+      {
+        "executionId": "2bffabf1-2835-4a26-af8f-c61c79eaabed",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794514020985
+      },
+      {
+        "executionId": "2bffabf1-2835-4a26-af8f-c61c79eaabed",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794514362688
       }
     ],
     "3.2 Create all ten named launch collections and make their collection types, sequence/order, curator guidance, and related-collection relationships explicit.": [
@@ -147,6 +157,16 @@
         "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
         "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
         "timestamp": 1794450066750
+      },
+      {
+        "executionId": "2bffabf1-2835-4a26-af8f-c61c79eaabed",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794514367873
+      },
+      {
+        "executionId": "2bffabf1-2835-4a26-af8f-c61c79eaabed",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794514942116
       }
     ],
     "3.3 Seed at least 50 movies, 20 characters, 50 products, 5 franchises, and 20 tags; include the named example characters, franchises, and product categories in the requirements.": [
@@ -154,6 +174,16 @@
         "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
         "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
         "timestamp": 1794450066786
+      },
+      {
+        "executionId": "2bffabf1-2835-4a26-af8f-c61c79eaabed",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794514947546
+      },
+      {
+        "executionId": "2bffabf1-2835-4a26-af8f-c61c79eaabed",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794517345196
       }
     ],
     "3.4 Verify all collection/entity relationships, missing-membership editorial warnings, recommended 5–15 collection item guidance, statuses, slugs, and launch metadata with seed-data tests.": [
@@ -161,6 +191,16 @@
         "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
         "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
         "timestamp": 1794450066822
+      },
+      {
+        "executionId": "2bffabf1-2835-4a26-af8f-c61c79eaabed",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794517351441
+      },
+      {
+        "executionId": "2bffabf1-2835-4a26-af8f-c61c79eaabed",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794519827905
       }
     ],
     "4.1 Implement published-only list/detail queries, stable slug routes, documented filters, ordered relationships, null handling, ISO-8601 timestamps, and 404 behavior.": [
@@ -168,6 +208,16 @@
         "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
         "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
         "timestamp": 1794450066858
+      },
+      {
+        "executionId": "50818779-1f95-4690-b9da-5225835218ae",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794522379295
+      },
+      {
+        "executionId": "50818779-1f95-4690-b9da-5225835218ae",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794523618196
       }
     ],
     "4.2 Implement `GET /home` with the exact HomeResponse field names and nullable featured movie/character/gift collection.": [
@@ -175,6 +225,16 @@
         "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
         "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
         "timestamp": 1794450066892
+      },
+      {
+        "executionId": "50818779-1f95-4690-b9da-5225835218ae",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794523622701
+      },
+      {
+        "executionId": "50818779-1f95-4690-b9da-5225835218ae",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794524087958
       }
     ],
     "4.3 Implement all collection, movie, character, and product routes and their source-defined detail projections, including related content and affiliate destinations.": [
@@ -182,6 +242,21 @@
         "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
         "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
         "timestamp": 1794450066923
+      },
+      {
+        "executionId": "50818779-1f95-4690-b9da-5225835218ae",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794524092446
+      },
+      {
+        "executionId": "7451d207-bab1-4b92-8590-b4f9093d340b",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794525194023
+      },
+      {
+        "executionId": "7451d207-bab1-4b92-8590-b4f9093d340b",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794526055449
       }
     ],
     "4.4 Add API contract tests for every method/path, optional query parameter, status behavior, serialized response shape, public content boundary, and decimal-safe product price representation.": [
@@ -189,6 +264,16 @@
         "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
         "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
         "timestamp": 1794450066957
+      },
+      {
+        "executionId": "768c1f7d-ec80-44fd-910c-8f7158c9feab",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794526589010
+      },
+      {
+        "executionId": "768c1f7d-ec80-44fd-910c-8f7158c9feab",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794527659766
       }
     ],
     "5.1 Implement `GET /search?q={query}` with the exact SearchResult fields, published-only records, and empty results for empty/whitespace queries.": [
@@ -196,6 +281,16 @@
         "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
         "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
         "timestamp": 1794450066994
+      },
+      {
+        "executionId": "9cb8fc71-c845-437b-ac5e-9cd3b85a6521",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794527850134
+      },
+      {
+        "executionId": "9cb8fc71-c845-437b-ac5e-9cd3b85a6521",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794528006202
       }
     ],
     "5.2 Add tests proving category ordering is collections, movies, characters, products for mixed matches and that slugs/IDs/summaries are serialized correctly.": [
@@ -203,6 +298,16 @@
         "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
         "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
         "timestamp": 1794450067025
+      },
+      {
+        "executionId": "9cb8fc71-c845-437b-ac5e-9cd3b85a6521",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794528009046
+      },
+      {
+        "executionId": "9cb8fc71-c845-437b-ac5e-9cd3b85a6521",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794528148445
       }
     ],
     "6.1 Fetch published slugs from `/build/collections`, `/build/movies`, `/build/characters`, and `/build/products`, then retrieve their public page models.": [
@@ -210,6 +315,16 @@
         "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
         "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
         "timestamp": 1794450067057
+      },
+      {
+        "executionId": "3713d892-2fd1-46df-9fb8-cbc45b7efa7a",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794529296405
+      },
+      {
+        "executionId": "3713d892-2fd1-46df-9fb8-cbc45b7efa7a",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794529700701
       }
     ],
     "6.2 Generate complete static HTML/routes for each published collection, movie, character, and product from shared page templates; do not use Next.js or runtime rendering.": [
@@ -217,6 +332,16 @@
         "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
         "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
         "timestamp": 1794450067088
+      },
+      {
+        "executionId": "3713d892-2fd1-46df-9fb8-cbc45b7efa7a",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794529709157
+      },
+      {
+        "executionId": "3713d892-2fd1-46df-9fb8-cbc45b7efa7a",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794530376971
       }
     ],
     "6.3 Generate page titles, meta descriptions with the documented fallback order, canonical URLs, Open Graph metadata, and appropriate Schema.org data.": [
@@ -224,6 +349,16 @@
         "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
         "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
         "timestamp": 1794450067115
+      },
+      {
+        "executionId": "3713d892-2fd1-46df-9fb8-cbc45b7efa7a",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794530384624
+      },
+      {
+        "executionId": "3713d892-2fd1-46df-9fb8-cbc45b7efa7a",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794531079979
       }
     ],
     "6.4 Generate `/sitemap.xml` and `robots.txt` from published content, including the administrative-route exclusion.": [
@@ -231,6 +366,16 @@
         "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
         "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
         "timestamp": 1794450067149
+      },
+      {
+        "executionId": "3713d892-2fd1-46df-9fb8-cbc45b7efa7a",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794531085950
+      },
+      {
+        "executionId": "3713d892-2fd1-46df-9fb8-cbc45b7efa7a",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794531555255
       }
     ],
     "6.5 Implement internal-link priorities, responsive/WebP/lazy image delivery hooks and fallback behavior; make missing collections emit a build warning and publication errors fail validation.": [
@@ -238,6 +383,16 @@
         "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
         "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
         "timestamp": 1794450067181
+      },
+      {
+        "executionId": "3713d892-2fd1-46df-9fb8-cbc45b7efa7a",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794531566735
+      },
+      {
+        "executionId": "3713d892-2fd1-46df-9fb8-cbc45b7efa7a",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794533945509
       }
     ],
     "6.6 Test static routes, metadata, structured data, sitemap/robots output, fallback behavior, unpublished-content exclusion, and availability of generated pages with the API stopped after build.": [
@@ -245,6 +400,16 @@
         "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
         "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
         "timestamp": 1794450067222
+      },
+      {
+        "executionId": "3713d892-2fd1-46df-9fb8-cbc45b7efa7a",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794533960732
+      },
+      {
+        "executionId": "3713d892-2fd1-46df-9fb8-cbc45b7efa7a",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794535542304
       }
     ],
     "7.1 Build the homepage with hero, featured/seasonal collections, featured character/movie, and gift discovery from the homepage API projection.": [
@@ -252,6 +417,16 @@
         "executionId": "d885006d-0c72-4392-9311-a6b6e6b03ef8",
         "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
         "timestamp": 1794450067253
+      },
+      {
+        "executionId": "d2ad3379-f569-4e39-a8c2-4df58b6181d8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794543370294
+      },
+      {
+        "executionId": "d2ad3379-f569-4e39-a8c2-4df58b6181d8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794585048223
       }
     ],
     "7.2 Build collection pages with ordered content, collection context/curator guidance, related collections, and useful next-step links.": [
@@ -378,6 +553,46 @@
         "executionId": "2b4f4fa5-07b2-402e-a335-a77a15dbf864",
         "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
         "timestamp": 1794512983080
+      }
+    ],
+    "3. Create launch seed data and editorial publication validation; pass the content inventory checkpoint before building public experiences.": [
+      {
+        "executionId": "2bffabf1-2835-4a26-af8f-c61c79eaabed",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794519828182
+      }
+    ],
+    "4. Implement and contract-test the public homepage, collection, movie, character, and product APIs.": [
+      {
+        "executionId": "768c1f7d-ec80-44fd-910c-8f7158c9feab",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794527659836
+      }
+    ],
+    "5. Implement PostgreSQL full-text search across the four MVP entity types and verify exact ranking behavior.": [
+      {
+        "executionId": "9cb8fc71-c845-437b-ac5e-9cd3b85a6521",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794528148484
+      }
+    ],
+    "6. Implement the dedicated static content-generation pipeline using the Vite/React application, then validate the generated output independently of runtime API availability.": [
+      {
+        "executionId": "3713d892-2fd1-46df-9fb8-cbc45b7efa7a",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794535542380
+      }
+    ],
+    "3.5 Complete any missing launch metadata in the seed content, then publish the seed catalog in the local development database so the public API and static generator operate on real PUBLISHED data; publish only records that pass the publication validators and report every record that cannot be published.": [
+      {
+        "executionId": "d2ad3379-f569-4e39-a8c2-4df58b6181d8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794542350328
+      },
+      {
+        "executionId": "d2ad3379-f569-4e39-a8c2-4df58b6181d8",
+        "chatSessionId": "sess_1918232b-c1ee-4383-8950-71882e692096",
+        "timestamp": 1794543340092
       }
     ]
   }
