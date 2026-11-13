@@ -387,6 +387,22 @@ export interface SearchResult {
 }
 
 // ============================================================================
+// Build API (static generation discovery, Task 6.1)
+// ============================================================================
+
+/**
+ * GET /build/collections | /build/movies | /build/characters | /build/products
+ * Each returns BuildSlugEntry[]: published records only, slug ascending.
+ * An object (not a bare string) so the sitemap can emit lastmod without extra
+ * requests. Slug is the only identifier; no internal IDs are exposed.
+ */
+export interface BuildSlugEntry {
+  slug: string;
+  /** ISO-8601 */
+  updatedAt: string;
+}
+
+// ============================================================================
 // Watchlist API
 // ============================================================================
 

@@ -17,30 +17,19 @@ import { PrismaClient, ContentStatus, CollectionType, MediaType } from '@prisma/
 
 const prisma = new PrismaClient();
 
-// Test data cleanup helper
+// Test data cleanup helper. Scoped to rows this file created (unique slug /
+// shareToken prefix) so seed data is never touched. Join rows and affiliate
+// links are removed through onDelete: Cascade.
+const P = 'zz-schema-';
 async function cleanupTestData() {
-  // Delete in correct order due to foreign key constraints
-  await prisma.collectionRelated.deleteMany({});
-  await prisma.collectionMovie.deleteMany({});
-  await prisma.collectionCharacter.deleteMany({});
-  await prisma.collectionProduct.deleteMany({});
-  await prisma.collectionFranchise.deleteMany({});
-  await prisma.collectionTag.deleteMany({});
-  await prisma.movieCharacter.deleteMany({});
-  await prisma.movieTag.deleteMany({});
-  await prisma.characterTag.deleteMany({});
-  await prisma.productTag.deleteMany({});
-  await prisma.productCharacter.deleteMany({});
-  await prisma.affiliateLink.deleteMany({});
-  await prisma.watchlistMovie.deleteMany({});
-  
-  await prisma.collection.deleteMany({});
-  await prisma.movie.deleteMany({});
-  await prisma.character.deleteMany({});
-  await prisma.product.deleteMany({});
-  await prisma.franchise.deleteMany({});
-  await prisma.tag.deleteMany({});
-  await prisma.watchlist.deleteMany({});
+  const where = { slug: { startsWith: P } };
+  await prisma.collection.deleteMany({ where });
+  await prisma.movie.deleteMany({ where });
+  await prisma.character.deleteMany({ where });
+  await prisma.product.deleteMany({ where });
+  await prisma.franchise.deleteMany({ where });
+  await prisma.tag.deleteMany({ where });
+  await prisma.watchlist.deleteMany({ where: { shareToken: { startsWith: P } } });
 }
 
 beforeAll(async () => {
@@ -60,7 +49,7 @@ beforeEach(async () => {
 describe('Schema Constraints', () => {
   describe('Unique Slug Constraints', () => {
     it('should enforce unique slugs per Collection', async () => {
-      const slug = 'test-collection';
+      const slug = P + 'test-collection';
       
       await prisma.collection.create({
         data: {
@@ -86,7 +75,7 @@ describe('Schema Constraints', () => {
     });
 
     it('should enforce unique slugs per Movie', async () => {
-      const slug = 'test-movie';
+      const slug = P + 'test-movie';
       
       await prisma.movie.create({
         data: {
@@ -106,7 +95,7 @@ describe('Schema Constraints', () => {
     });
 
     it('should enforce unique slugs per Character', async () => {
-      const slug = 'test-character';
+      const slug = P + 'test-character';
       
       await prisma.character.create({
         data: {
@@ -126,7 +115,7 @@ describe('Schema Constraints', () => {
     });
 
     it('should enforce unique slugs per Product', async () => {
-      const slug = 'test-product';
+      const slug = P + 'test-product';
       
       await prisma.product.create({
         data: {
@@ -150,7 +139,7 @@ describe('Schema Constraints', () => {
     it('should prevent duplicate CollectionMovie relationships', async () => {
       const collection = await prisma.collection.create({
         data: {
-          slug: 'collection-1',
+          slug: P + 'collection-1',
           title: 'Collection 1',
           type: CollectionType.THEME,
           introduction: 'Test',
@@ -160,7 +149,7 @@ describe('Schema Constraints', () => {
 
       const movie = await prisma.movie.create({
         data: {
-          slug: 'movie-1',
+          slug: P + 'movie-1',
           title: 'Movie 1',
         },
       });
@@ -187,14 +176,14 @@ describe('Schema Constraints', () => {
     it('should prevent duplicate WatchlistMovie relationships', async () => {
       const watchlist = await prisma.watchlist.create({
         data: {
-          shareToken: 'test-token-123',
+          shareToken: P + 'test-token-123',
           title: 'My Watchlist',
         },
       });
 
       const movie = await prisma.movie.create({
         data: {
-          slug: 'movie-1',
+          slug: P + 'movie-1',
           title: 'Movie 1',
         },
       });
@@ -221,7 +210,7 @@ describe('Schema Constraints', () => {
     it('should prevent duplicate CollectionRelated relationships', async () => {
       const collection1 = await prisma.collection.create({
         data: {
-          slug: 'collection-1',
+          slug: P + 'collection-1',
           title: 'Collection 1',
           type: CollectionType.THEME,
           introduction: 'Test',
@@ -231,7 +220,7 @@ describe('Schema Constraints', () => {
 
       const collection2 = await prisma.collection.create({
         data: {
-          slug: 'collection-2',
+          slug: P + 'collection-2',
           title: 'Collection 2',
           type: CollectionType.THEME,
           introduction: 'Test',
@@ -261,7 +250,7 @@ describe('Schema Constraints', () => {
 
   describe('Unique Share Tokens', () => {
     it('should enforce unique watchlist share tokens', async () => {
-      const token = 'unique-share-token';
+      const token = P + 'unique-share-token';
       
       await prisma.watchlist.create({
         data: {
@@ -286,7 +275,7 @@ describe('Optional Relationships', () => {
   it('should allow Movie without franchise', async () => {
     const movie = await prisma.movie.create({
       data: {
-        slug: 'standalone-movie',
+        slug: P + 'standalone-movie',
         title: 'Standalone Movie',
         franchiseId: null, // Explicitly null
       },
@@ -298,7 +287,7 @@ describe('Optional Relationships', () => {
   it('should allow Character without franchise', async () => {
     const character = await prisma.character.create({
       data: {
-        slug: 'standalone-character',
+        slug: P + 'standalone-character',
         name: 'Standalone Character',
         franchiseId: null,
       },
@@ -310,7 +299,7 @@ describe('Optional Relationships', () => {
   it('should allow Product without franchise', async () => {
     const product = await prisma.product.create({
       data: {
-        slug: 'standalone-product',
+        slug: P + 'standalone-product',
         name: 'Standalone Product',
         franchiseId: null,
       },
@@ -322,14 +311,14 @@ describe('Optional Relationships', () => {
   it('should allow Movie with franchise', async () => {
     const franchise = await prisma.franchise.create({
       data: {
-        slug: 'test-franchise',
+        slug: P + 'test-franchise',
         name: 'Test Franchise',
       },
     });
 
     const movie = await prisma.movie.create({
       data: {
-        slug: 'franchise-movie',
+        slug: P + 'franchise-movie',
         title: 'Franchise Movie',
         franchiseId: franchise.id,
       },
@@ -341,7 +330,7 @@ describe('Optional Relationships', () => {
   it('should allow optional curator notes in CollectionMovie', async () => {
     const collection = await prisma.collection.create({
       data: {
-        slug: 'collection-1',
+        slug: P + 'collection-1',
         title: 'Collection 1',
         type: CollectionType.THEME,
         introduction: 'Test',
@@ -351,7 +340,7 @@ describe('Optional Relationships', () => {
 
     const movie = await prisma.movie.create({
       data: {
-        slug: 'movie-1',
+        slug: P + 'movie-1',
         title: 'Movie 1',
       },
     });
@@ -369,7 +358,7 @@ describe('Optional Relationships', () => {
 
     const movie2 = await prisma.movie.create({
       data: {
-        slug: 'movie-2',
+        slug: P + 'movie-2',
         title: 'Movie 2',
       },
     });
@@ -391,7 +380,7 @@ describe('Ordering and Sort Order', () => {
   it('should enforce unique sortOrder per collection for movies', async () => {
     const collection = await prisma.collection.create({
       data: {
-        slug: 'collection-1',
+        slug: P + 'collection-1',
         title: 'Collection 1',
         type: CollectionType.THEME,
         introduction: 'Test',
@@ -400,11 +389,11 @@ describe('Ordering and Sort Order', () => {
     });
 
     const movie1 = await prisma.movie.create({
-      data: { slug: 'movie-1', title: 'Movie 1' },
+      data: { slug: P + 'movie-1', title: 'Movie 1' },
     });
 
     const movie2 = await prisma.movie.create({
-      data: { slug: 'movie-2', title: 'Movie 2' },
+      data: { slug: P + 'movie-2', title: 'Movie 2' },
     });
 
     await prisma.collectionMovie.create({
@@ -430,7 +419,7 @@ describe('Ordering and Sort Order', () => {
   it('should allow same sortOrder in different collections', async () => {
     const collection1 = await prisma.collection.create({
       data: {
-        slug: 'collection-1',
+        slug: P + 'collection-1',
         title: 'Collection 1',
         type: CollectionType.THEME,
         introduction: 'Test',
@@ -440,7 +429,7 @@ describe('Ordering and Sort Order', () => {
 
     const collection2 = await prisma.collection.create({
       data: {
-        slug: 'collection-2',
+        slug: P + 'collection-2',
         title: 'Collection 2',
         type: CollectionType.THEME,
         introduction: 'Test',
@@ -449,7 +438,7 @@ describe('Ordering and Sort Order', () => {
     });
 
     const movie = await prisma.movie.create({
-      data: { slug: 'movie-1', title: 'Movie 1' },
+      data: { slug: P + 'movie-1', title: 'Movie 1' },
     });
 
     // Same sortOrder in different collections is OK
@@ -476,17 +465,17 @@ describe('Ordering and Sort Order', () => {
   it('should enforce unique sortOrder per watchlist', async () => {
     const watchlist = await prisma.watchlist.create({
       data: {
-        shareToken: 'test-token',
+        shareToken: P + 'test-token',
         title: 'Test Watchlist',
       },
     });
 
     const movie1 = await prisma.movie.create({
-      data: { slug: 'movie-1', title: 'Movie 1' },
+      data: { slug: P + 'movie-1', title: 'Movie 1' },
     });
 
     const movie2 = await prisma.movie.create({
-      data: { slug: 'movie-2', title: 'Movie 2' },
+      data: { slug: P + 'movie-2', title: 'Movie 2' },
     });
 
     await prisma.watchlistMovie.create({
@@ -511,7 +500,7 @@ describe('Ordering and Sort Order', () => {
   it('should maintain stable ordering across queries', async () => {
     const collection = await prisma.collection.create({
       data: {
-        slug: 'ordered-collection',
+        slug: P + 'ordered-collection',
         title: 'Ordered Collection',
         type: CollectionType.THEME,
         introduction: 'Test',
@@ -521,13 +510,13 @@ describe('Ordering and Sort Order', () => {
 
     // Create movies in non-sequential order
     const movie3 = await prisma.movie.create({
-      data: { slug: 'movie-3', title: 'Movie 3' },
+      data: { slug: P + 'movie-3', title: 'Movie 3' },
     });
     const movie1 = await prisma.movie.create({
-      data: { slug: 'movie-1', title: 'Movie 1' },
+      data: { slug: P + 'movie-1', title: 'Movie 1' },
     });
     const movie2 = await prisma.movie.create({
-      data: { slug: 'movie-2', title: 'Movie 2' },
+      data: { slug: P + 'movie-2', title: 'Movie 2' },
     });
 
     // Add with explicit ordering
@@ -559,7 +548,7 @@ describe('Price Precision', () => {
   it('should preserve decimal precision for product prices', async () => {
     const product = await prisma.product.create({
       data: {
-        slug: 'priced-product',
+        slug: P + 'priced-product',
         name: 'Priced Product',
         price: 29.99,
         currency: 'USD',
@@ -577,7 +566,7 @@ describe('Price Precision', () => {
   it('should handle .01 precision accurately', async () => {
     const product = await prisma.product.create({
       data: {
-        slug: 'penny-product',
+        slug: P + 'penny-product',
         name: 'Penny Product',
         price: 0.01,
         currency: 'USD',
@@ -594,7 +583,7 @@ describe('Price Precision', () => {
   it('should handle high-precision decimal values', async () => {
     const product = await prisma.product.create({
       data: {
-        slug: 'precise-product',
+        slug: P + 'precise-product',
         name: 'Precise Product',
         price: 1234.56,
         currency: 'USD',
@@ -611,7 +600,7 @@ describe('Price Precision', () => {
   it('should allow null price', async () => {
     const product = await prisma.product.create({
       data: {
-        slug: 'unpriced-product',
+        slug: P + 'unpriced-product',
         name: 'Unpriced Product',
         price: null,
         currency: null,
@@ -625,7 +614,7 @@ describe('Price Precision', () => {
   it('should store currency as 3-character code', async () => {
     const product = await prisma.product.create({
       data: {
-        slug: 'euro-product',
+        slug: P + 'euro-product',
         name: 'Euro Product',
         price: 19.99,
         currency: 'EUR',
@@ -641,7 +630,7 @@ describe('Status Values and Enums', () => {
   it('should accept valid ContentStatus values', async () => {
     const draft = await prisma.collection.create({
       data: {
-        slug: 'draft-collection',
+        slug: P + 'draft-collection',
         title: 'Draft',
         type: CollectionType.THEME,
         introduction: 'Test',
@@ -652,7 +641,7 @@ describe('Status Values and Enums', () => {
 
     const published = await prisma.collection.create({
       data: {
-        slug: 'published-collection',
+        slug: P + 'published-collection',
         title: 'Published',
         type: CollectionType.THEME,
         introduction: 'Test',
@@ -664,7 +653,7 @@ describe('Status Values and Enums', () => {
 
     const archived = await prisma.collection.create({
       data: {
-        slug: 'archived-collection',
+        slug: P + 'archived-collection',
         title: 'Archived',
         type: CollectionType.THEME,
         introduction: 'Test',
@@ -691,7 +680,7 @@ describe('Status Values and Enums', () => {
     for (let i = 0; i < types.length; i++) {
       const collection = await prisma.collection.create({
         data: {
-          slug: `collection-type-${i}`,
+          slug: `${P}collection-type-${i}`,
           title: `Collection ${types[i]}`,
           type: types[i],
           introduction: 'Test',
@@ -706,7 +695,7 @@ describe('Status Values and Enums', () => {
   it('should accept valid MediaType values', async () => {
     const film = await prisma.movie.create({
       data: {
-        slug: 'film',
+        slug: P + 'film',
         title: 'Film',
         mediaType: MediaType.FILM,
       },
@@ -714,7 +703,7 @@ describe('Status Values and Enums', () => {
 
     const special = await prisma.movie.create({
       data: {
-        slug: 'special',
+        slug: P + 'special',
         title: 'Special',
         mediaType: MediaType.TELEVISION_SPECIAL,
       },
@@ -722,7 +711,7 @@ describe('Status Values and Enums', () => {
 
     const episode = await prisma.movie.create({
       data: {
-        slug: 'episode',
+        slug: P + 'episode',
         title: 'Episode',
         mediaType: MediaType.TELEVISION_EPISODE,
       },
@@ -736,7 +725,7 @@ describe('Status Values and Enums', () => {
   it('should default to DRAFT status', async () => {
     const collection = await prisma.collection.create({
       data: {
-        slug: 'default-status',
+        slug: P + 'default-status',
         title: 'Default Status',
         type: CollectionType.THEME,
         introduction: 'Test',
@@ -753,7 +742,7 @@ describe('Cascade and Set Null Behavior', () => {
   it('should cascade delete CollectionMovie when Collection is deleted', async () => {
     const collection = await prisma.collection.create({
       data: {
-        slug: 'cascade-collection',
+        slug: P + 'cascade-collection',
         title: 'Cascade Collection',
         type: CollectionType.THEME,
         introduction: 'Test',
@@ -762,7 +751,7 @@ describe('Cascade and Set Null Behavior', () => {
     });
 
     const movie = await prisma.movie.create({
-      data: { slug: 'movie-1', title: 'Movie 1' },
+      data: { slug: P + 'movie-1', title: 'Movie 1' },
     });
 
     await prisma.collectionMovie.create({
@@ -796,7 +785,7 @@ describe('Cascade and Set Null Behavior', () => {
   it('should cascade delete CollectionMovie when Movie is deleted', async () => {
     const collection = await prisma.collection.create({
       data: {
-        slug: 'cascade-collection',
+        slug: P + 'cascade-collection',
         title: 'Cascade Collection',
         type: CollectionType.THEME,
         introduction: 'Test',
@@ -805,7 +794,7 @@ describe('Cascade and Set Null Behavior', () => {
     });
 
     const movie = await prisma.movie.create({
-      data: { slug: 'movie-1', title: 'Movie 1' },
+      data: { slug: P + 'movie-1', title: 'Movie 1' },
     });
 
     await prisma.collectionMovie.create({
@@ -832,14 +821,14 @@ describe('Cascade and Set Null Behavior', () => {
   it('should set franchiseId to null when Franchise is deleted', async () => {
     const franchise = await prisma.franchise.create({
       data: {
-        slug: 'test-franchise',
+        slug: P + 'test-franchise',
         name: 'Test Franchise',
       },
     });
 
     const movie = await prisma.movie.create({
       data: {
-        slug: 'franchise-movie',
+        slug: P + 'franchise-movie',
         title: 'Franchise Movie',
         franchiseId: franchise.id,
       },
@@ -862,7 +851,7 @@ describe('Cascade and Set Null Behavior', () => {
   it('should cascade delete AffiliateLink when Product is deleted', async () => {
     const product = await prisma.product.create({
       data: {
-        slug: 'linked-product',
+        slug: P + 'linked-product',
         name: 'Linked Product',
       },
     });
@@ -889,13 +878,13 @@ describe('Cascade and Set Null Behavior', () => {
   it('should cascade delete WatchlistMovie when Watchlist is deleted', async () => {
     const watchlist = await prisma.watchlist.create({
       data: {
-        shareToken: 'cascade-token',
+        shareToken: P + 'cascade-token',
         title: 'Cascade Watchlist',
       },
     });
 
     const movie = await prisma.movie.create({
-      data: { slug: 'movie-1', title: 'Movie 1' },
+      data: { slug: P + 'movie-1', title: 'Movie 1' },
     });
 
     await prisma.watchlistMovie.create({
@@ -924,7 +913,7 @@ describe('Timestamps', () => {
     
     const collection = await prisma.collection.create({
       data: {
-        slug: 'timestamp-test',
+        slug: P + 'timestamp-test',
         title: 'Timestamp Test',
         type: CollectionType.THEME,
         introduction: 'Test',
@@ -943,7 +932,7 @@ describe('Timestamps', () => {
   it('should update updatedAt on modification', async () => {
     const collection = await prisma.collection.create({
       data: {
-        slug: 'update-test',
+        slug: P + 'update-test',
         title: 'Update Test',
         type: CollectionType.THEME,
         introduction: 'Test',
@@ -970,7 +959,7 @@ describe('Directed Relationships', () => {
   it('should preserve directional related-collection relationships', async () => {
     const collection1 = await prisma.collection.create({
       data: {
-        slug: 'collection-1',
+        slug: P + 'collection-1',
         title: 'Collection 1',
         type: CollectionType.THEME,
         introduction: 'Test',
@@ -980,7 +969,7 @@ describe('Directed Relationships', () => {
 
     const collection2 = await prisma.collection.create({
       data: {
-        slug: 'collection-2',
+        slug: P + 'collection-2',
         title: 'Collection 2',
         type: CollectionType.THEME,
         introduction: 'Test',
@@ -1016,7 +1005,7 @@ describe('Directed Relationships', () => {
   it('should allow bidirectional relationships when explicitly created', async () => {
     const collection1 = await prisma.collection.create({
       data: {
-        slug: 'collection-1',
+        slug: P + 'collection-1',
         title: 'Collection 1',
         type: CollectionType.THEME,
         introduction: 'Test',
@@ -1026,7 +1015,7 @@ describe('Directed Relationships', () => {
 
     const collection2 = await prisma.collection.create({
       data: {
-        slug: 'collection-2',
+        slug: P + 'collection-2',
         title: 'Collection 2',
         type: CollectionType.THEME,
         introduction: 'Test',

@@ -6,6 +6,7 @@
   "description": "Horror Christmas - Node.js + TypeScript API application",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "dev:http": "tsx src/dev-http.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
@@ -15,7 +16,18 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
-    "db:test": "node test-db-connection.js"
+    "db:test": "node test-db-connection.js",
+    "seed": "tsx prisma/seed.ts",
+    "seed:collections": "tsx prisma/seed-collections.ts",
+    "seed:franchises": "tsx prisma/seed-franchises.ts",
+    "seed:tags": "tsx prisma/seed-tags.ts",
+    "seed:movies": "tsx prisma/seed-movies.ts",
+    "seed:characters": "tsx prisma/seed-characters.ts",
+    "seed:products": "tsx prisma/seed-products.ts",
+    "seed:relationships": "tsx prisma/seed-relationships.ts",
+    "verify:collections": "tsx scripts/verify-collections.ts",
+    "fixture:static-offline": "tsx scripts/static-offline-fixture.ts",
+    "test:seed": "vitest run seed-verification"
   },
   "dependencies": {
     "@prisma/client": "^6.1.0"

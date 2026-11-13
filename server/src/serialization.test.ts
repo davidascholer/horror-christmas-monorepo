@@ -21,29 +21,19 @@ import type {
 
 const prisma = new PrismaClient();
 
-// Test data cleanup helper
+// Test data cleanup helper. Scoped to rows this file created (unique slug /
+// shareToken prefix) so seed data is never touched. Join rows and affiliate
+// links are removed through onDelete: Cascade.
+const P = 'zz-serial-';
 async function cleanupTestData() {
-  await prisma.collectionRelated.deleteMany({});
-  await prisma.collectionMovie.deleteMany({});
-  await prisma.collectionCharacter.deleteMany({});
-  await prisma.collectionProduct.deleteMany({});
-  await prisma.collectionFranchise.deleteMany({});
-  await prisma.collectionTag.deleteMany({});
-  await prisma.movieCharacter.deleteMany({});
-  await prisma.movieTag.deleteMany({});
-  await prisma.characterTag.deleteMany({});
-  await prisma.productTag.deleteMany({});
-  await prisma.productCharacter.deleteMany({});
-  await prisma.affiliateLink.deleteMany({});
-  await prisma.watchlistMovie.deleteMany({});
-  
-  await prisma.collection.deleteMany({});
-  await prisma.movie.deleteMany({});
-  await prisma.character.deleteMany({});
-  await prisma.product.deleteMany({});
-  await prisma.franchise.deleteMany({});
-  await prisma.tag.deleteMany({});
-  await prisma.watchlist.deleteMany({});
+  const where = { slug: { startsWith: P } };
+  await prisma.collection.deleteMany({ where });
+  await prisma.movie.deleteMany({ where });
+  await prisma.character.deleteMany({ where });
+  await prisma.product.deleteMany({ where });
+  await prisma.franchise.deleteMany({ where });
+  await prisma.tag.deleteMany({ where });
+  await prisma.watchlist.deleteMany({ where: { shareToken: { startsWith: P } } });
 }
 
 beforeAll(async () => {
@@ -64,7 +54,7 @@ describe('Monetary Precision and Currency Serialization', () => {
     it('should preserve .01 precision in price fields', async () => {
       const product = await prisma.product.create({
         data: {
-          slug: 'penny-test',
+          slug: P + 'penny-test',
           name: 'Penny Test Product',
           price: 0.01,
           currency: 'USD',
@@ -89,7 +79,7 @@ describe('Monetary Precision and Currency Serialization', () => {
     it('should preserve standard price precision (e.g., 19.99)', async () => {
       const product = await prisma.product.create({
         data: {
-          slug: 'standard-price',
+          slug: P + 'standard-price',
           name: 'Standard Price Product',
           price: 19.99,
           currency: 'USD',
@@ -117,7 +107,7 @@ describe('Monetary Precision and Currency Serialization', () => {
     it('should preserve high-precision decimal values (e.g., 1234.56)', async () => {
       const product = await prisma.product.create({
         data: {
-          slug: 'high-price',
+          slug: P + 'high-price',
           name: 'High Price Product',
           price: 1234.56,
           currency: 'USD',
@@ -145,7 +135,7 @@ describe('Monetary Precision and Currency Serialization', () => {
     it('should handle zero price correctly', async () => {
       const product = await prisma.product.create({
         data: {
-          slug: 'free-product',
+          slug: P + 'free-product',
           name: 'Free Product',
           price: 0.00,
           currency: 'USD',
@@ -173,7 +163,7 @@ describe('Monetary Precision and Currency Serialization', () => {
     it('should handle null price correctly', async () => {
       const product = await prisma.product.create({
         data: {
-          slug: 'unpriced-product',
+          slug: P + 'unpriced-product',
           name: 'Unpriced Product',
           price: null,
           currency: null,
@@ -201,7 +191,7 @@ describe('Monetary Precision and Currency Serialization', () => {
     it('should not lose precision through multiple serialization cycles', async () => {
       const product = await prisma.product.create({
         data: {
-          slug: 'multi-cycle',
+          slug: P + 'multi-cycle',
           name: 'Multi-Cycle Product',
           price: 29.99,
           currency: 'USD',
@@ -237,7 +227,7 @@ describe('Monetary Precision and Currency Serialization', () => {
     it('should serialize USD currency correctly', async () => {
       const product = await prisma.product.create({
         data: {
-          slug: 'usd-product',
+          slug: P + 'usd-product',
           name: 'USD Product',
           price: 19.99,
           currency: 'USD',
@@ -262,7 +252,7 @@ describe('Monetary Precision and Currency Serialization', () => {
     it('should serialize EUR currency correctly', async () => {
       const product = await prisma.product.create({
         data: {
-          slug: 'eur-product',
+          slug: P + 'eur-product',
           name: 'EUR Product',
           price: 24.99,
           currency: 'EUR',
@@ -286,7 +276,7 @@ describe('Monetary Precision and Currency Serialization', () => {
     it('should serialize GBP currency correctly', async () => {
       const product = await prisma.product.create({
         data: {
-          slug: 'gbp-product',
+          slug: P + 'gbp-product',
           name: 'GBP Product',
           price: 16.99,
           currency: 'GBP',
@@ -310,7 +300,7 @@ describe('Monetary Precision and Currency Serialization', () => {
     it('should keep currency paired with price', async () => {
       const product = await prisma.product.create({
         data: {
-          slug: 'paired-product',
+          slug: P + 'paired-product',
           name: 'Paired Product',
           price: 49.99,
           currency: 'CAD',
@@ -340,14 +330,14 @@ describe('Monetary Precision and Currency Serialization', () => {
     it('should serialize full product detail with price and currency', async () => {
       const franchise = await prisma.franchise.create({
         data: {
-          slug: 'test-franchise',
+          slug: P + 'test-franchise',
           name: 'Test Franchise',
         },
       });
 
       const product = await prisma.product.create({
         data: {
-          slug: 'detailed-product',
+          slug: P + 'detailed-product',
           name: 'Detailed Product',
           description: 'A detailed product description',
           category: 'Apparel',
@@ -426,7 +416,7 @@ describe('Slug-Based Public Routes', () => {
     it('should use slug in collection summary, not database ID', async () => {
       const collection = await prisma.collection.create({
         data: {
-          slug: 'essential-krampus',
+          slug: P + 'essential-krampus',
           title: 'Essential Krampus',
           type: 'CHARACTER',
           introduction: 'Introduction',
@@ -447,7 +437,7 @@ describe('Slug-Based Public Routes', () => {
       };
 
       // Verify slug is present and different from ID
-      expect(apiCollection.slug).toBe('essential-krampus');
+      expect(apiCollection.slug).toBe(P + 'essential-krampus');
       expect(apiCollection.slug).not.toBe(apiCollection.id);
       
       // In production, ID would not be exposed in public routes
@@ -459,7 +449,7 @@ describe('Slug-Based Public Routes', () => {
     it('should use unique slug for each collection', async () => {
       const collection1 = await prisma.collection.create({
         data: {
-          slug: 'collection-one',
+          slug: P + 'collection-one',
           title: 'Collection One',
           type: 'THEME',
           introduction: 'Introduction',
@@ -469,7 +459,7 @@ describe('Slug-Based Public Routes', () => {
 
       const collection2 = await prisma.collection.create({
         data: {
-          slug: 'collection-two',
+          slug: P + 'collection-two',
           title: 'Collection Two',
           type: 'THEME',
           introduction: 'Introduction',
@@ -499,8 +489,8 @@ describe('Slug-Based Public Routes', () => {
         seasonal: collection2.seasonal,
       };
 
-      expect(api1.slug).toBe('collection-one');
-      expect(api2.slug).toBe('collection-two');
+      expect(api1.slug).toBe(P + 'collection-one');
+      expect(api2.slug).toBe(P + 'collection-two');
       expect(api1.slug).not.toBe(api2.slug);
     });
   });
@@ -509,7 +499,7 @@ describe('Slug-Based Public Routes', () => {
     it('should use slug in movie summary, not database ID', async () => {
       const movie = await prisma.movie.create({
         data: {
-          slug: 'krampus-2015',
+          slug: P + 'krampus-2015',
           title: 'Krampus',
           mediaType: 'FILM',
           releaseYear: 2015,
@@ -527,14 +517,14 @@ describe('Slug-Based Public Routes', () => {
         synopsis: movie.synopsis,
       };
 
-      expect(apiMovie.slug).toBe('krampus-2015');
+      expect(apiMovie.slug).toBe(P + 'krampus-2015');
       expect(apiMovie.slug).not.toBe(apiMovie.id);
     });
 
     it('should construct canonical URL from slug', async () => {
       const movie = await prisma.movie.create({
         data: {
-          slug: 'gremlins-1984',
+          slug: P + 'gremlins-1984',
           title: 'Gremlins',
           mediaType: 'FILM',
           releaseYear: 1984,
@@ -544,7 +534,7 @@ describe('Slug-Based Public Routes', () => {
       // Canonical URL construction (as would be done in API/frontend)
       const canonicalUrl = `/movies/${movie.slug}`;
 
-      expect(canonicalUrl).toBe('/movies/gremlins-1984');
+      expect(canonicalUrl).toBe('/movies/' + P + 'gremlins-1984');
       expect(canonicalUrl).not.toContain(movie.id);
     });
   });
@@ -553,7 +543,7 @@ describe('Slug-Based Public Routes', () => {
     it('should use slug in character summary, not database ID', async () => {
       const character = await prisma.character.create({
         data: {
-          slug: 'krampus',
+          slug: P + 'krampus',
           name: 'Krampus',
           summary: 'The Christmas demon',
           status: ContentStatus.PUBLISHED,
@@ -568,7 +558,7 @@ describe('Slug-Based Public Routes', () => {
         imageUrl: character.imageUrl,
       };
 
-      expect(apiCharacter.slug).toBe('krampus');
+      expect(apiCharacter.slug).toBe(P + 'krampus');
       expect(apiCharacter.slug).not.toBe(apiCharacter.id);
     });
   });
@@ -577,7 +567,7 @@ describe('Slug-Based Public Routes', () => {
     it('should use slug in product summary, not database ID', async () => {
       const product = await prisma.product.create({
         data: {
-          slug: 'krampus-ornament',
+          slug: P + 'krampus-ornament',
           name: 'Krampus Ornament',
           price: 24.99,
           currency: 'USD',
@@ -596,7 +586,7 @@ describe('Slug-Based Public Routes', () => {
         category: product.category,
       };
 
-      expect(apiProduct.slug).toBe('krampus-ornament');
+      expect(apiProduct.slug).toBe(P + 'krampus-ornament');
       expect(apiProduct.slug).not.toBe(apiProduct.id);
       expect(apiProduct.price).toBe('24.99');
       expect(apiProduct.currency).toBe('USD');
@@ -607,7 +597,7 @@ describe('Slug-Based Public Routes', () => {
     it('should serialize collection-movie relationships with slugs', async () => {
       const collection = await prisma.collection.create({
         data: {
-          slug: 'holiday-horror',
+          slug: P + 'holiday-horror',
           title: 'Holiday Horror',
           type: 'THEME',
           introduction: 'Introduction',
@@ -617,7 +607,7 @@ describe('Slug-Based Public Routes', () => {
 
       const movie = await prisma.movie.create({
         data: {
-          slug: 'black-christmas',
+          slug: P + 'black-christmas',
           title: 'Black Christmas',
           mediaType: 'FILM',
         },
@@ -654,14 +644,14 @@ describe('Slug-Based Public Routes', () => {
       }));
 
       expect(apiResponse).toHaveLength(1);
-      expect(apiResponse[0].movie.slug).toBe('black-christmas');
+      expect(apiResponse[0].movie.slug).toBe(P + 'black-christmas');
       expect(apiResponse[0].curatorNote).toBe('A classic starting point');
     });
 
     it('should serialize related collections with slugs', async () => {
       const collection1 = await prisma.collection.create({
         data: {
-          slug: 'krampus-collection',
+          slug: P + 'krampus-collection',
           title: 'Krampus Collection',
           type: 'CHARACTER',
           introduction: 'Introduction',
@@ -671,7 +661,7 @@ describe('Slug-Based Public Routes', () => {
 
       const collection2 = await prisma.collection.create({
         data: {
-          slug: 'winter-demons',
+          slug: P + 'winter-demons',
           title: 'Winter Demons',
           type: 'THEME',
           introduction: 'Introduction',
@@ -709,20 +699,20 @@ describe('Slug-Based Public Routes', () => {
       }));
 
       expect(apiResponse).toHaveLength(1);
-      expect(apiResponse[0].collection.slug).toBe('winter-demons');
+      expect(apiResponse[0].collection.slug).toBe(P + 'winter-demons');
     });
 
     it('should serialize product with character relationships using slugs', async () => {
       const character = await prisma.character.create({
         data: {
-          slug: 'krampus',
+          slug: P + 'krampus',
           name: 'Krampus',
         },
       });
 
       const product = await prisma.product.create({
         data: {
-          slug: 'krampus-plush',
+          slug: P + 'krampus-plush',
           name: 'Krampus Plush',
           price: 34.99,
           currency: 'USD',
@@ -756,7 +746,7 @@ describe('Slug-Based Public Routes', () => {
       }));
 
       expect(apiResponse).toHaveLength(1);
-      expect(apiResponse[0].character.slug).toBe('krampus');
+      expect(apiResponse[0].character.slug).toBe(P + 'krampus');
     });
   });
 
@@ -764,7 +754,7 @@ describe('Slug-Based Public Routes', () => {
     it('should use shareToken not internal ID for public access', async () => {
       const watchlist = await prisma.watchlist.create({
         data: {
-          shareToken: 'abc123xyz789',
+          shareToken: P + 'abc123xyz789',
           title: 'My Horror Watchlist',
         },
       });
@@ -772,21 +762,21 @@ describe('Slug-Based Public Routes', () => {
       // Public share URL uses token, not database ID
       const shareUrl = `/watchlists/${watchlist.shareToken}`;
 
-      expect(shareUrl).toBe('/watchlists/abc123xyz789');
+      expect(shareUrl).toBe('/watchlists/' + P + 'abc123xyz789');
       expect(shareUrl).not.toContain(watchlist.id);
     });
 
     it('should serialize watchlist movies with movie slugs', async () => {
       const watchlist = await prisma.watchlist.create({
         data: {
-          shareToken: 'test-token',
+          shareToken: P + 'test-token',
           title: 'Test Watchlist',
         },
       });
 
       const movie = await prisma.movie.create({
         data: {
-          slug: 'rare-exports',
+          slug: P + 'rare-exports',
           title: 'Rare Exports',
           mediaType: 'FILM',
         },
@@ -823,7 +813,7 @@ describe('Slug-Based Public Routes', () => {
       }));
 
       expect(apiResponse).toHaveLength(1);
-      expect(apiResponse[0].movie.slug).toBe('rare-exports');
+      expect(apiResponse[0].movie.slug).toBe(P + 'rare-exports');
     });
   });
 });
@@ -832,7 +822,7 @@ describe('Type Safety and Contract Compliance', () => {
   it('should enforce ProductSummary type contract with price as string', () => {
     const product: ProductSummary = {
       id: 'prod-123',
-      slug: 'test-product',
+      slug: P + 'test-product',
       name: 'Test Product',
       description: 'A test product',
       imageUrl: 'https://example.com/image.jpg',
@@ -848,7 +838,7 @@ describe('Type Safety and Contract Compliance', () => {
   it('should enforce Product type contract with price as string', () => {
     const product: Product = {
       id: 'prod-123',
-      slug: 'test-product',
+      slug: P + 'test-product',
       name: 'Test Product',
       description: 'A test product',
       category: 'Apparel',
@@ -873,7 +863,7 @@ describe('Type Safety and Contract Compliance', () => {
   it('should enforce slug presence in all summary types', () => {
     const collection: CollectionSummary = {
       id: 'coll-123',
-      slug: 'test-collection',
+      slug: P + 'test-collection',
       title: 'Test Collection',
       summary: null,
       type: 'THEME',
@@ -884,7 +874,7 @@ describe('Type Safety and Contract Compliance', () => {
 
     const movie: MovieSummary = {
       id: 'movie-123',
-      slug: 'test-movie',
+      slug: P + 'test-movie',
       title: 'Test Movie',
       releaseYear: 2023,
       mediaType: 'FILM',
@@ -894,7 +884,7 @@ describe('Type Safety and Contract Compliance', () => {
 
     const character: CharacterSummary = {
       id: 'char-123',
-      slug: 'test-character',
+      slug: P + 'test-character',
       name: 'Test Character',
       summary: null,
       imageUrl: null,
@@ -902,7 +892,7 @@ describe('Type Safety and Contract Compliance', () => {
 
     const product: ProductSummary = {
       id: 'prod-123',
-      slug: 'test-product',
+      slug: P + 'test-product',
       name: 'Test Product',
       description: null,
       imageUrl: null,
