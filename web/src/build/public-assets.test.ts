@@ -15,7 +15,7 @@ async function tmp(prefix: string) {
   return mkdtemp(path.join(tmpdir(), `${prefix}-`));
 }
 
-describe('web/public/images/fallback.svg', () => {
+describe('web/public/images/image-unavailable.svg', () => {
   it('exists, is a small plain SVG with no external references or scripts, and is accessible', async () => {
     const svg = await readFile(path.join(DEFAULT_PUBLIC_DIR, FALLBACK_IMAGE_PATH), 'utf8');
     expect(svg.length).toBeLessThan(2000);
@@ -32,11 +32,11 @@ describe('copyPublicAssets', () => {
     const out = await tmp('out');
     try {
       await mkdir(path.join(pub, 'images/deep'), { recursive: true });
-      await writeFile(path.join(pub, 'images/fallback.svg'), '<svg/>');
+      await writeFile(path.join(pub, 'images/image-unavailable.svg'), '<svg/>');
       await writeFile(path.join(pub, 'images/deep/a.txt'), 'a');
       await writeFile(path.join(pub, 'favicon.ico'), 'ico');
-      expect(await copyPublicAssets(pub, out)).toEqual(['favicon.ico', 'images/deep/a.txt', 'images/fallback.svg']);
-      expect(await readFile(path.join(out, 'images/fallback.svg'), 'utf8')).toBe('<svg/>');
+      expect(await copyPublicAssets(pub, out)).toEqual(['favicon.ico', 'images/deep/a.txt', 'images/image-unavailable.svg']);
+      expect(await readFile(path.join(out, 'images/image-unavailable.svg'), 'utf8')).toBe('<svg/>');
       expect(await readFile(path.join(out, 'images/deep/a.txt'), 'utf8')).toBe('a');
     } finally {
       await rm(pub, { recursive: true, force: true });
@@ -49,13 +49,13 @@ describe('copyPublicAssets', () => {
     const out = await tmp('out');
     try {
       await mkdir(path.join(pub, 'images'), { recursive: true });
-      await writeFile(path.join(pub, 'images/fallback.svg'), 'new');
+      await writeFile(path.join(pub, 'images/image-unavailable.svg'), 'new');
       await mkdir(path.join(out, 'images'), { recursive: true });
-      await writeFile(path.join(out, 'images/fallback.svg'), 'old');
+      await writeFile(path.join(out, 'images/image-unavailable.svg'), 'old');
       await writeFile(path.join(out, 'images/other.png'), 'keep');
       await writeFile(path.join(out, 'sitemap.xml'), 'keep');
       await copyPublicAssets(pub, out);
-      expect(await readFile(path.join(out, 'images/fallback.svg'), 'utf8')).toBe('new');
+      expect(await readFile(path.join(out, 'images/image-unavailable.svg'), 'utf8')).toBe('new');
       expect(await readFile(path.join(out, 'images/other.png'), 'utf8')).toBe('keep');
       expect(await readFile(path.join(out, 'sitemap.xml'), 'utf8')).toBe('keep');
     } finally {
@@ -100,7 +100,7 @@ describe('assertFallbackImageExists', () => {
     await expect(assertFallbackImageExists(DEFAULT_PUBLIC_DIR)).resolves.toBeUndefined();
     const empty = await tmp('empty');
     try {
-      await expect(assertFallbackImageExists(empty)).rejects.toThrow(/Fallback image not found.*fallback\.svg/);
+      await expect(assertFallbackImageExists(empty)).rejects.toThrow(/Fallback image not found.*image-unavailable\.svg/);
     } finally {
       await rm(empty, { recursive: true, force: true });
     }
@@ -124,17 +124,17 @@ describe('generateStatic and the fallback asset', () => {
     return model ? new Response(JSON.stringify(model)) : new Response('', { status: 404 });
   }) as typeof fetch;
 
-  it('copies /images/fallback.svg into the output and the movie page and og:image point at it', async () => {
+  it('copies /images/image-unavailable.svg into the output and the movie page and og:image point at it', async () => {
     const out = await tmp('gen');
     try {
       const summary = await generateStatic({ assets: TEST_ASSETS, env, outDir: out, fetch: fake });
-      expect((await stat(path.join(out, 'images/fallback.svg'))).isFile()).toBe(true);
-      expect(await readFile(path.join(out, 'images/fallback.svg'), 'utf8')).toBe(
-        await readFile(path.join(DEFAULT_PUBLIC_DIR, 'images/fallback.svg'), 'utf8'),
+      expect((await stat(path.join(out, 'images/image-unavailable.svg'))).isFile()).toBe(true);
+      expect(await readFile(path.join(out, 'images/image-unavailable.svg'), 'utf8')).toBe(
+        await readFile(path.join(DEFAULT_PUBLIC_DIR, 'images/image-unavailable.svg'), 'utf8'),
       );
       const html = await readFile(path.join(out, 'movies/black-christmas/index.html'), 'utf8');
-      expect(html).toContain('<img src="/images/fallback.svg" alt=""');
-      expect(html).toContain(`<meta property="og:image" content="${SITE}/images/fallback.svg"/>`);
+      expect(html).toContain('<img src="/images/image-unavailable.svg" alt=""');
+      expect(html).toContain(`<meta property="og:image" content="${SITE}/images/image-unavailable.svg"/>`);
       expect(html).toContain('<meta name="twitter:card" content="summary"/>');
       expect(summary.warnings.map((w) => w.message)).toEqual([
         // The homepage (Task 7.1) uses the fallback og:image too, with the same warning policy.
@@ -158,12 +158,49 @@ describe('generateStatic and the fallback asset', () => {
     }
   });
 
+  it('substitutes missing root-relative image files, keeps real ones, and warns once in sorted order', async () => {
+    const out = await tmp('gen-missing-img');
+    const pub = await tmp('missing-img-public');
+    const withImages: Record<string, unknown> = {
+      'collections/cozy-slashers': collection({ heroImageUrl: '/images/collections/b-gone.jpg' }),
+      'collections/gift-guide': collection({ id: 'c2', slug: 'gift-guide', heroImageUrl: '/images/collections/a-gone.jpg' }),
+      'movies/black-christmas': movie({ posterUrl: '/images/movies/real.jpg', heroImageUrl: null }),
+    };
+    const fakeWithImages = (async (input: RequestInfo | URL) => {
+      const [, first, second] = new URL(String(input)).pathname.split('/');
+      const model = withImages[`${first}/${second}`];
+      return model ? new Response(JSON.stringify(model)) : fake(input);
+    }) as typeof fetch;
+    try {
+      await mkdir(path.join(pub, 'images/movies'), { recursive: true });
+      await writeFile(path.join(pub, 'images/image-unavailable.svg'), '<svg xmlns="http://www.w3.org/2000/svg"/>');
+      await writeFile(path.join(pub, 'images/movies/real.jpg'), 'jpg');
+      const summary = await generateStatic({ assets: TEST_ASSETS, env, outDir: out, publicDir: pub, fetch: fakeWithImages });
+      const messages = summary.warnings.map((w) => w.message);
+      const lines = messages.filter((m) => m.includes('not found under public/'));
+      expect(lines).toEqual([
+        `images: 2 image files were not found under public/ and use the placeholder ${FALLBACK_IMAGE_PATH} ` +
+          '(2 references; first 2: /images/collections/a-gone.jpg, /images/collections/b-gone.jpg)',
+      ]);
+      // No per-entity "no usable image" line for a substituted image (the movie has a real file).
+      expect(messages.filter((m) => /^(collection|movie) /.test(m))).toEqual([]);
+      const movieHtml = await readFile(path.join(out, 'movies/black-christmas/index.html'), 'utf8');
+      expect(movieHtml).toContain('src="/images/movies/real.jpg"');
+      const col = await readFile(path.join(out, 'collections/cozy-slashers/index.html'), 'utf8');
+      expect(col).toContain(`src="${FALLBACK_IMAGE_PATH}"`);
+      expect(col).not.toContain('b-gone.jpg');
+    } finally {
+      await rm(out, { recursive: true, force: true });
+      await rm(pub, { recursive: true, force: true });
+    }
+  });
+
   it('copies other public files too (custom public directory)', async () => {
     const out = await tmp('gen-custom');
     const pub = await tmp('custom-public');
     try {
       await mkdir(path.join(pub, 'images'), { recursive: true });
-      await writeFile(path.join(pub, 'images/fallback.svg'), '<svg xmlns="http://www.w3.org/2000/svg"/>');
+      await writeFile(path.join(pub, 'images/image-unavailable.svg'), '<svg xmlns="http://www.w3.org/2000/svg"/>');
       await writeFile(path.join(pub, 'extra.txt'), 'extra');
       await generateStatic({ assets: TEST_ASSETS, env, outDir: out, publicDir: pub, fetch: fake });
       expect(await readFile(path.join(out, 'extra.txt'), 'utf8')).toBe('extra');

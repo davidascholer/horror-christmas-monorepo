@@ -66,14 +66,14 @@ export async function assertFallbackImageExists(publicDir: string): Promise<void
   if (!ok) {
     throw new Error(
       `Fallback image not found: expected ${file}. Pages and og:image refer to ${FALLBACK_IMAGE_PATH}; ` +
-        'restore web/public/images/fallback.svg',
+        'restore web/public/images/image-unavailable.svg',
     );
   }
 }
 
 /**
  * Copies the contents of `publicDir` into `outDir` (Task 6.5), keeping relative
- * paths, so `public/images/fallback.svg` is served as `/images/fallback.svg`.
+ * paths, so `public/images/image-unavailable.svg` is served as `/images/image-unavailable.svg`.
  * Returns the copied files (relative, forward slashes, sorted).
  *
  * - This is the only place `public/` is copied: Vite's own public-dir copy is

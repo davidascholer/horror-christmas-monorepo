@@ -227,12 +227,12 @@ describe('Open Graph tags', () => {
   it('uses the site fallback image as og:image (and the small card) when there is no image', () => {
     for (const page of [pc({ heroImageUrl: null }), pm({ posterUrl: null }), pch({ imageUrl: null }), pp({ imageUrl: null })]) {
       const { meta, map } = tagMap(page);
-      expect(map['og:image']).toBe(`${SITE}/images/fallback.svg`);
+      expect(map['og:image']).toBe(`${SITE}/images/image-unavailable.svg`);
       expect(meta.usedFallbackImage).toBe(true);
       expect(meta.image).toBeNull(); // the entity has no image of its own (JSON-LD omits it)
-      expect(JSON.stringify(meta.jsonLd)).not.toContain('fallback.svg');
+      expect(JSON.stringify(meta.jsonLd)).not.toContain('image-unavailable.svg');
       expect(map['twitter:card']).toBe('summary');
-      expect(meta.warnings.some((w) => /no usable image; using fallback image \/images\/fallback\.svg/.test(w.message))).toBe(true);
+      expect(meta.warnings.some((w) => /no usable image; using fallback image \/images\/image-unavailable\.svg/.test(w.message))).toBe(true);
     }
   });
 
@@ -245,13 +245,13 @@ describe('Open Graph tags', () => {
 
   it('applies the fallback under a SITE_URL path prefix', () => {
     const meta = resolvePageMetadata(pm({ posterUrl: null }), 'https://example.test/base/');
-    expect(meta.ogImage).toBe('https://example.test/base/images/fallback.svg');
+    expect(meta.ogImage).toBe('https://example.test/base/images/image-unavailable.svg');
   });
 
   it('treats an invalid image URL as no image and falls back', () => {
     for (const bad of ['javascript:alert(1)', 'data:image/png;base64,AA', '//cdn.test/a.jpg', '/\\evil.test/a.jpg', 'img/a.jpg']) {
       const { meta, map } = tagMap(pc({ heroImageUrl: bad }));
-      expect(map['og:image']).toBe(`${SITE}/images/fallback.svg`);
+      expect(map['og:image']).toBe(`${SITE}/images/image-unavailable.svg`);
       expect(meta.usedFallbackImage).toBe(true);
     }
   });
@@ -485,8 +485,8 @@ describe('full page render and generator', () => {
       expect(summary.warnings.map((w) => w.message)).toEqual([
         expect.stringMatching(/^NO PUBLISHED COLLECTIONS/), // this fixture builds a lone movie
         // The homepage (Task 7.1) has no brand image yet: the same fallback-image warning policy as an entity.
-        expect.stringMatching(/^home "\/": no usable image; using fallback image \/images\/fallback\.svg/),
-        expect.stringMatching(/^movie "black-christmas": no usable image; using fallback image \/images\/fallback\.svg/),
+        expect.stringMatching(/^home "\/": no usable image; using fallback image \/images\/image-unavailable\.svg/),
+        expect.stringMatching(/^movie "black-christmas": no usable image; using fallback image \/images\/image-unavailable\.svg/),
       ]);
       expect(formatSummary(summary)).toContain('warnings:    3');
 

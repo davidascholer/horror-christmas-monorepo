@@ -14,6 +14,7 @@ import { readClientAssets, type ClientAssets } from './client-assets';
 import { readSiteUrl } from './site-url';
 import { ROBOTS_FILE, SITEMAP_FILE, renderSeoFiles } from './sitemap';
 import { DEFAULT_PUBLIC_DIR, assertFallbackImageExists, copyPublicAssets, writePages, writeSeoFiles } from './write-pages';
+import { missingImagesWarning, substituteMissingImages } from './missing-images';
 import { assertPublishable } from './validate-publication';
 import path from 'node:path';
 
@@ -23,7 +24,7 @@ export const DEFAULT_OUT_DIR = 'dist-static';
 export interface GenerateOptions {
   env: Record<string, string | undefined>;
   outDir?: string;
-  /** Static assets copied into the output (default: `public`, relative to web/). Must contain images/fallback.svg. */
+  /** Static assets copied into the output (default: `public`, relative to web/). Must contain images/image-unavailable.svg. */
   publicDir?: string;
   fetch?: typeof fetch;
   /**
@@ -77,8 +78,15 @@ export async function generateStatic(options: GenerateOptions): Promise<Generate
   assertPublishable(data);
   const publicDir = options.publicDir ?? DEFAULT_PUBLIC_DIR;
   await assertFallbackImageExists(publicDir);
+  // Root-relative image URLs whose file is not in public/ become the placeholder, in the DATA, before
+  // rendering: the embedded hydration data then holds the same values the server rendered (after validation,
+  // so a present-but-missing file is not a publication error). One summary warning, not one per image.
+  const images = await substituteMissingImages(data, publicDir);
+  const rendered: BuildData = images.data;
+  const imagesWarning = missingImagesWarning(images);
+  if (imagesWarning) data.warnings.push(imagesWarning);
   // Metadata and reference warnings (fallback image, missing collection, ...) are appended after the fetch warnings.
-  const pages = renderSite(data, { siteUrl, warnings: data.warnings, assets });
+  const pages = renderSite(rendered, { siteUrl, warnings: data.warnings, assets });
   // Built before anything is written so a sitemap limit error leaves the output untouched.
   const seo = renderSeoFiles(data, siteUrl);
   await writePages(pages, outDir);

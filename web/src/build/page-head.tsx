@@ -24,7 +24,7 @@ import { entityFacts, type SitePageModel } from './page-model';
 import { buildSocialTags, type MetaTag } from './open-graph';
 import { buildJsonLd, serializeJsonLd, type JsonLd } from './json-ld';
 import { pageTitle, resolveDescription, type ResolvedDescription } from './seo';
-import { FALLBACK_IMAGE_PATH, firstUsableImageUrl } from '../pages/image-sources';
+import { FALLBACK_IMAGE_PATH, firstUsableImageUrl, isPlaceholderImageUrl } from '../pages/image-sources';
 import { canonicalUrl, normalizeSiteUrl, resolveImageUrl } from './site-url';
 import { HOME_PATH } from '../routes';
 import { HOME_DESCRIPTION, HOME_TITLE } from '../pages/home-content';
@@ -102,7 +102,10 @@ export function resolvePageMetadata(page: SitePageModel, siteUrl: string, option
   const image = own ? resolveImageUrl(own, site) : null;
   const usedFallbackImage = image === null;
   const ogImage = image ?? site + FALLBACK_IMAGE_PATH;
-  if (usedFallbackImage) {
+  // A candidate that is the placeholder path was substituted by the build because its file
+  // is missing; the summary warning (missing-images.ts) counts it, so no per-entity line here.
+  const substituted = facts.imageCandidates.some(isPlaceholderImageUrl);
+  if (usedFallbackImage && !substituted) {
     warn(`no usable image; using fallback image ${FALLBACK_IMAGE_PATH} (og:image is ${ogImage}, twitter:card is "summary")`);
   }
 

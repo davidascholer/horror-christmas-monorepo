@@ -13,6 +13,11 @@ import { mountApp } from './mount';
 import { renderSite, type RenderedPage } from '../build/render-site';
 import { SITE, TEST_ASSETS, character, charSummary, colSummary, collection, emptyHome, movie, movieSummary, product, validData } from '../build/test-fixtures';
 import { hydrateWith } from './hydration-helpers';
+import { substituteMissingImages } from '../build/missing-images';
+import { FALLBACK_IMAGE_PATH } from '../pages/image-sources';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -30,7 +35,11 @@ const data = validData({
 // The homepage (Task 7.1): every section present, hostile text, and references that are not built (plain text).
 const fullHome = {
   featuredCollections: [colSummary('cozy-slashers', 'Cozy </script>& "Slashers"'), colSummary('ghost', 'Ghost')],
-  seasonalCollections: [{ ...colSummary('cozy-slashers', 'Cozy Slashers'), seasonal: true, summary: 'Seasonal & <b>bold</b>' }],
+  // cozy-slashers is also featured, so the owner's one-appearance rule drops it here; 'frost' stays (unbuilt: plain text).
+  seasonalCollections: [
+    { ...colSummary('cozy-slashers', 'Cozy Slashers'), seasonal: true, summary: 'Seasonal & <b>bold</b>' },
+    { ...colSummary('frost', 'Frost'), seasonal: true },
+  ],
   giftCollection: { ...colSummary('ghost-gift', 'Ghost Gift'), type: 'GIFT' as const },
   featuredCharacter: { ...charSummary('billy', 'Billy'), imageUrl: 'https://img.test/b.jpg' },
   featuredMovie: movieSummary('not-built-movie', 'Not Built'),
@@ -89,8 +98,52 @@ describe('hydration of server-rendered pages', () => {
     await hydrate(page);
     expect(errors).toEqual([]);
     const hrefs = [...document.querySelectorAll('main a')].map((a) => a.getAttribute('href'));
-    expect(hrefs).toEqual(['#featured-collections', '/collections/cozy-slashers/', '/collections/cozy-slashers/', '/characters/billy/']);
-    expect(document.querySelector('main')!.textContent).toContain('Not Built');
+    expect(hrefs).toEqual(['#featured-collections', '/collections/cozy-slashers/', '/characters/billy/']);
+    const text = document.querySelector('main')!.textContent!;
+    expect(text).toContain('Not Built');
+    expect(text).toContain('Frost');
+    // Deduplicated before render: the embedded data holds the same final lists the browser hydrated.
+    const embedded = JSON.parse(document.getElementById('__PAGE_DATA__')!.textContent!);
+    expect(embedded.page.model.seasonalCollections.map((c: { slug: string }) => c.slug)).toEqual(['frost']);
+  });
+
+  // Owner review: root-relative image URLs without a file become the placeholder in the DATA before render.
+  // Server markup and hydration must agree on all five page types, with zero warnings.
+  describe('pages whose images were substituted by the build', () => {
+    let substituted: RenderedPage[] = [];
+    beforeEach(async () => {
+      const emptyPublic = await mkdtemp(path.join(tmpdir(), 'hc-hydrate-pub-'));
+      const missing = (p: string) => `/images/${p}/gone.jpg`;
+      const base = {
+        ...data,
+        collections: [collection({ heroImageUrl: missing('collections') })],
+        movies: [movie({ posterUrl: missing('movies'), heroImageUrl: null })],
+        characters: [character({ imageUrl: missing('characters') })],
+        products: [product({ imageUrl: missing('products') })],
+        home: {
+          ...fullHome,
+          featuredCollections: [{ ...colSummary('cozy-slashers', 'Cozy Slashers'), heroImageUrl: missing('collections') }],
+          featuredMovie: { ...movieSummary('black-christmas', 'Black Christmas'), posterUrl: missing('movies') },
+        },
+      };
+      const result = await substituteMissingImages(base, emptyPublic);
+      await rm(emptyPublic, { recursive: true, force: true });
+      expect(result.missing.length).toBe(4);
+      substituted = renderSite(result.data, { siteUrl: SITE, assets: TEST_ASSETS });
+    });
+
+    it.each(['home', 'collection', 'movie', 'character', 'product'])('%s page hydrates with the placeholder, no mismatch', async (type) => {
+      const page = substituted.find((p) => p.type === type)!;
+      expect(page.html).not.toContain('gone.jpg');
+      const { mode, before, after, recoverable } = await hydrate(page);
+      expect(mode).toBe('hydrate');
+      expect(errors).toEqual([]);
+      expect(recoverable).toEqual([]);
+      expect(after).toBe(before);
+      expect(document.querySelector('main img')!.getAttribute('src')).toBe(FALLBACK_IMAGE_PATH);
+      // The browser received the substituted values, it does not recompute them.
+      expect(document.getElementById('__PAGE_DATA__')!.textContent).not.toContain('gone.jpg');
+    });
   });
 
   it('has a working control: a changed server markup IS reported as a mismatch', async () => {

@@ -35,6 +35,7 @@ import { FEATURED_COLLECTIONS_ANCHOR, characterPath, collectionPath, moviePath }
 import {
   HOME_CTA_LABEL, HOME_EYEBROW, HOME_HEADINGS, HOME_HEADLINE_LEAD, HOME_HEADLINE_TAIL, HOME_INTRO,
 } from './home-content';
+import { dedupeHomeCollections } from './home-collections';
 import { HOME_LINK_GROUP_ORDER, OrderedLinkSections, type HomeLinkGroup, type LinkSectionSpec } from './link-priority';
 import { RenderContext } from './render-context';
 import { COLLECTION_TYPE_LABEL, MEDIA_TYPE_LABEL, PageImage } from './shared';
@@ -229,7 +230,9 @@ function Hero({ hasFeaturedCollections }: { hasFeaturedCollections: boolean }) {
   );
 }
 
-export function HomePage({ home }: { home: HomeResponse }) {
+export function HomePage({ home: given }: { home: HomeResponse }) {
+  // Each collection is shown once (gift > featured > seasonal); idempotent, see home-collections.ts.
+  const home = dedupeHomeCollections(given).home;
   const { featuredCollections, seasonalCollections, giftCollection, featuredCharacter, featuredMovie } = home;
   return (
     <>

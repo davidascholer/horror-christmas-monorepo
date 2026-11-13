@@ -11,8 +11,18 @@
  * produced and where they are stored (R2 or S3, image CDN) is an open decision.
  */
 
-/** Site-relative path of the placeholder shown when an image is missing or invalid. */
-export const FALLBACK_IMAGE_PATH = '/images/fallback.svg';
+/**
+ * Site-relative path of THE "Image unavailable" placeholder (web/public/images/image-unavailable.svg).
+ * It is the only placeholder asset: it is shown (and used as og:image) when an
+ * entity has no image URL, an unusable URL, or a root-relative URL whose file
+ * does not exist under public/ (substituted at build time, see missing-images.ts).
+ */
+export const FALLBACK_IMAGE_PATH = '/images/image-unavailable.svg';
+
+/** True when `value` is the placeholder's own path (what the build substitutes for a missing file). */
+export function isPlaceholderImageUrl(value: string | null | undefined): boolean {
+  return typeof value === 'string' && value.trim() === FALLBACK_IMAGE_PATH;
+}
 
 export interface ImageSources {
   /** URL used for the `<img src>`; always the original (or an equivalent) so every browser has a working image. */
@@ -35,11 +45,15 @@ export const defaultImageSourceResolver: ImageSourceResolver = (url) => ({ src: 
  * The (trimmed) URL if it is usable as an image source: an absolute http(s)
  * URL with a host, or a root-relative path. Everything else (blank, spaces,
  * `javascript:`, `data:`, protocol-relative `//x` or `/\x`, relative paths,
- * unparsable) is null.
+ * unparsable) is null. The placeholder's own path is also null: an image that
+ * the build replaced by the placeholder is "no image" for every consumer (the
+ * page markup renders the placeholder with its decorative alt, og:image uses the
+ * placeholder with the summary card, a movie falls through to its next image).
  */
 export function usableImageUrl(value: string | null | undefined): string | null {
   const raw = value?.trim();
   if (!raw || /\s/.test(raw)) return null;
+  if (raw === FALLBACK_IMAGE_PATH) return null;
   if (/^https?:\/\//i.test(raw)) {
     try {
       return new URL(raw).hostname ? raw : null;

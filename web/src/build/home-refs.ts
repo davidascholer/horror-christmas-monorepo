@@ -14,22 +14,37 @@
 import type { BuildData, BuildWarning } from './fetch-build-data';
 import type { HomeResponse } from '../types/api-contracts';
 import { HOME_PATH } from '../routes';
+import { dedupeHomeCollections, dedupeMessage } from '../pages/home-collections';
 
 type Built = Pick<BuildData, 'collections' | 'movies' | 'characters'>;
 
 const warning = (message: string): BuildWarning => ({ entityType: 'home', slug: HOME_PATH, message: `home "${HOME_PATH}": ${message}` });
 
-export function homeWarnings(home: HomeResponse, built: Built): BuildWarning[] {
+/**
+ * Warnings for the homepage. `given` is the `/home` projection as the API returned
+ * it; the checks look at what the page actually displays (the deduplicated lists,
+ * pages/home-collections.ts), the same lists the render, the hydration data and
+ * the JSON-LD use.
+ */
+export function homeWarnings(given: HomeResponse, built: Built): BuildWarning[] {
   const warnings: BuildWarning[] = [];
+  const dedupe = dedupeHomeCollections(given);
+  const home = dedupe.home;
 
   if (built.collections.length > 0 && home.featuredCollections.length === 0) {
+    const why =
+      given.featuredCollections.length > 0
+        ? ` (/home returned ${given.featuredCollections.length}, all shown elsewhere on the page as the gift collection)`
+        : '';
     warnings.push(
       warning(
-        `NO FEATURED COLLECTIONS: ${built.collections.length} collections are published but /home returns no featured collection. ` +
+        `NO FEATURED COLLECTIONS: ${built.collections.length} collections are published but the homepage displays no featured collection${why}. ` +
           'The homepage has no featured collections section; mark at least one published collection as featured',
       ),
     );
   }
+  const info = dedupeMessage(dedupe);
+  if (info) warnings.push(warning(info));
 
   const collections = new Set(built.collections.map((c) => c.slug));
   const movies = new Set(built.movies.map((m) => m.slug));

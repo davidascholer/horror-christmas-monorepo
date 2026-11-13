@@ -17,7 +17,7 @@
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createHash } from 'node:crypto';
-import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -79,13 +79,28 @@ interface Generated {
   /** Files the fake client build put in the output (manifest and assets). */
   clientFiles: string[];
 }
+/**
+ * A copy of web/public plus REAL files for the two root-relative fixture images (/uploads/...), so the
+ * build keeps them (it substitutes the placeholder only for files that do not exist). Created once.
+ */
+let fixturePublic: Promise<string> | undefined;
+function fixturePublicDir(): Promise<string> {
+  fixturePublic ??= (async () => {
+    const dir = await tmp();
+    await cp(PUBLIC_DIR, dir, { recursive: true });
+    await mkdir(path.join(dir, 'uploads'), { recursive: true });
+    for (const f of ['jack-frost.png', 'poster.png']) await writeFile(path.join(dir, 'uploads', f), 'png');
+    return dir;
+  })();
+  return fixturePublic;
+}
 async function generate(opts: { reverseLists?: boolean; jitterMs?: number; out?: string; mutate?: (fx: Fixture) => void } = {}): Promise<Generated> {
   const out = opts.out ?? (await tmp());
   const fx = makeFixture();
   opts.mutate?.(fx);
   const api = createFakeApi(fx, opts);
   const clientFiles = await writeFakeClientBuild(out);
-  const summary = await generateStatic({ env: ENV, outDir: out, publicDir: PUBLIC_DIR, fetch: api.fetch });
+  const summary = await generateStatic({ env: ENV, outDir: out, publicDir: await fixturePublicDir(), fetch: api.fetch });
   return { out, fx, summary, requested: api.requested, clientFiles };
 }
 
@@ -153,7 +168,7 @@ function expectedImage(kind: Kind, m: Record<string, any>): { url: string; own: 
   const candidates: Array<string | null> =
     kind === 'collections' ? [m.heroImageUrl] : kind === 'movies' ? [m.posterUrl, m.heroImageUrl] : [m.imageUrl];
   const own = candidates.find((c) => !!c);
-  if (!own) return { url: `${SITE}/images/fallback.svg`, own: false };
+  if (!own) return { url: `${SITE}/images/image-unavailable.svg`, own: false };
   return { url: own.startsWith('/') ? SITE + own : own, own: true };
 }
 
@@ -189,7 +204,7 @@ const pageBy = (kind: Kind, slug: string): Page => {
 beforeAll(async () => {
   main = await generate();
   files = await listFiles(main.out);
-  publicFiles = await listFiles(PUBLIC_DIR);
+  publicFiles = await listFiles(await fixturePublicDir());
   homeDoc = parseHome(await readFile(path.join(main.out, 'index.html'), 'utf8'));
   pages = [];
   for (const kind of KINDS) {
@@ -399,7 +414,7 @@ describe('metadata in the written head', () => {
       expect(once('twitter:card', 'name'), p.rel).toBe(img.own ? 'summary_large_image' : 'summary');
     }
     // The interesting ones, spelled out.
-    expect(metaValues(pageBy('movies', 'silent-night').head, 'property', 'og:image')).toEqual([`${SITE}/images/fallback.svg`]);
+    expect(metaValues(pageBy('movies', 'silent-night').head, 'property', 'og:image')).toEqual([`${SITE}/images/image-unavailable.svg`]);
     expect(metaValues(pageBy('movies', 'krampus').head, 'property', 'og:image')).toEqual(['https://img.test/krampus-hero.jpg']);
     expect(metaValues(pageBy('movies', 'jack-frost').head, 'property', 'og:image')).toEqual([`${SITE}/uploads/jack-frost.png`]);
     expect(metaValues(pageBy('movies', 'jack-frost').head, 'name', 'twitter:card')).toEqual(['summary_large_image']);
@@ -551,16 +566,16 @@ describe('sitemap.xml and robots.txt', () => {
 describe('fallback behavior', () => {
   const noImage: Array<[Kind, string]> = [['movies', 'silent-night'], ['characters', 'krampus-beast'], ['products', 'hostile-product']];
 
-  it('renders the fallback image where there is no usable image, and ships a byte-identical fallback.svg', async () => {
+  it('renders the fallback image where there is no usable image, and ships a byte-identical image-unavailable.svg', async () => {
     for (const [k, slug] of noImage) {
       const imgs = byTag(pageBy(k, slug).main, 'img');
       expect(imgs.map((i) => ({ src: i.attrs.src, alt: i.attrs.alt, role: i.attrs.role })), slug).toEqual([
-        { src: '/images/fallback.svg', alt: '', role: 'presentation' },
+        { src: '/images/image-unavailable.svg', alt: '', role: 'presentation' },
       ]);
     }
-    expect(files).toContain('images/fallback.svg');
-    const shipped = await readFile(path.join(main.out, 'images/fallback.svg'));
-    expect(shipped.equals(await readFile(path.join(PUBLIC_DIR, 'images/fallback.svg')))).toBe(true);
+    expect(files).toContain('images/image-unavailable.svg');
+    const shipped = await readFile(path.join(main.out, 'images/image-unavailable.svg'));
+    expect(shipped.equals(await readFile(path.join(PUBLIC_DIR, 'images/image-unavailable.svg')))).toBe(true);
     // Real images keep their own URL and a non-empty alt.
     const bc = byTag(pageBy('movies', 'black-christmas').main, 'img')[0];
     expect(bc.attrs.src).toBe('https://img.test/bc.jpg');
@@ -577,7 +592,11 @@ describe('fallback behavior', () => {
     expect(missing.map((m) => m.split(':')[0]).sort()).toEqual(['collection "full-collection"', 'home "/"', 'movie "black-christmas"']);
     expect(msgs.filter((m) => m.includes('404'))).toHaveLength(1);
     expect(msgs.filter((m) => /no meta description/.test(m))).toEqual([]); // validation guarantees SEO descriptions
-    expect(msgs).toHaveLength(8);
+    // Added by the owner review: the home duplicate note (one line). The fixture ships real files for its two
+    // root-relative images, so there is no missing-image summary here (missing-images.test.ts covers it).
+    expect(msgs.filter((m) => /image files were not found under public\//.test(m))).toEqual([]);
+    expect(msgs.filter((m) => m.startsWith('home "/": removed 1 duplicate collection entries (1 from featured, 0 from seasonal)'))).toHaveLength(1);
+    expect(msgs).toHaveLength(9);
   });
 
   it('renders an unresolved collection reference as plain text with no dead link anywhere', async () => {
@@ -814,7 +833,7 @@ describe('validation failure', () => {
       'movies/old/index.html': 'STALE MOVIE',
       'sitemap.xml': 'OLD SITEMAP',
       'robots.txt': 'OLD ROBOTS',
-      'images/fallback.svg': 'OLD SVG',
+      'images/image-unavailable.svg': 'OLD SVG',
       'keep/me.txt': 'unrelated',
     };
     for (const [rel, body] of Object.entries(seed)) {
@@ -860,7 +879,7 @@ describe('determinism', () => {
     const reversed = await generate({ reverseLists: true, jitterMs: 6 });
     expect(await snapshot(reversed.out)).toEqual(reference);
     // Re-running into the same directory changes nothing either (no stale or timestamped files).
-    await generateStatic({ env: ENV, outDir: main.out, publicDir: PUBLIC_DIR, fetch: createFakeApi(makeFixture()).fetch });
+    await generateStatic({ env: ENV, outDir: main.out, publicDir: await fixturePublicDir(), fetch: createFakeApi(makeFixture()).fetch });
     expect(await snapshot(main.out)).toEqual(reference);
   });
 });
@@ -880,7 +899,7 @@ describe('independence from the API after the build', () => {
         { url: '/', rel: 'index.html', type: CONTENT_TYPES['.html'] },
         { url: '/sitemap.xml', rel: 'sitemap.xml', type: CONTENT_TYPES['.xml'] },
         { url: '/robots.txt', rel: 'robots.txt', type: CONTENT_TYPES['.txt'] },
-        { url: '/images/fallback.svg', rel: 'images/fallback.svg', type: CONTENT_TYPES['.svg'] },
+        { url: '/images/image-unavailable.svg', rel: 'images/image-unavailable.svg', type: CONTENT_TYPES['.svg'] },
         { url: '/assets/entry-client-FAKE.js', rel: 'assets/entry-client-FAKE.js', type: CONTENT_TYPES['.js'] },
         { url: '/assets/entry-client-FAKE.css', rel: 'assets/entry-client-FAKE.css', type: CONTENT_TYPES['.css'] },
       ];
@@ -953,7 +972,7 @@ describe('homepage', () => {
     expect(headingTexts('h1')).toHaveLength(1);
     expect(headingTexts('h2')).toEqual(['Featured collections', 'Seasonal collections', 'Gift ideas', 'Featured character', 'Featured movie']);
     expect(headingTexts('h3')).toEqual([
-      'Minimal Collection', 'Full Collection', // featured, API order (not alphabetical)
+      'Minimal Collection', // featured (Full Collection is also the gift collection: the gift section wins, so it is not repeated here)
       'Advent Challenge', 'Ghost Collection', // seasonal
       'Full Collection', // gift
       'Billy', // featured character
@@ -965,8 +984,8 @@ describe('homepage', () => {
   it('shows /home in API order, as list items with meaningful link text', () => {
     const featured = sectionById('featured-collections')!;
     const items = byTag(one(byTag(featured, 'ul'), 'featured list'), 'li');
-    expect(items.map((li) => one(byTag(li, 'a'), 'card link').attrs.href)).toEqual(['/collections/minimal-collection/', '/collections/full-collection/']);
-    expect(items.map((li) => textOf(byTag(li, 'a')[0]))).toEqual(['Minimal Collection', 'Full Collection']);
+    expect(items.map((li) => one(byTag(li, 'a'), 'card link').attrs.href)).toEqual(['/collections/minimal-collection/']);
+    expect(items.map((li) => textOf(byTag(li, 'a')[0]))).toEqual(['Minimal Collection']);
     // Only fields that exist on the summaries: type label and summary text.
     expect(textOf(items[0])).toContain('Theme collection');
     expect(textOf(items[0])).toContain('Short & sweet.');
@@ -1022,7 +1041,7 @@ describe('homepage', () => {
 
   it('renders every image lazily (none is eager or high priority) and adds no image preload', () => {
     const imgs = byTag(homeDoc.main, 'img');
-    expect(imgs).toHaveLength(7); // one per card
+    expect(imgs).toHaveLength(6); // one per card (the duplicate featured Full Collection card is gone)
     for (const i of imgs) {
       expect(i.attrs.loading, i.attrs.src).toBe('lazy');
       expect(i.attrs.decoding).toBe('async');
@@ -1033,7 +1052,7 @@ describe('homepage', () => {
     // Real images keep their URL and the card title as alt; a missing image uses the decorative fallback.
     const min = imgs.find((i) => i.attrs.src === 'https://img.test/min.jpg')!;
     expect(min.attrs.alt).toBe('Minimal Collection');
-    expect(imgs.filter((i) => i.attrs.src === '/images/fallback.svg').every((i) => i.attrs.alt === '' && i.attrs.role === 'presentation')).toBe(true);
+    expect(imgs.filter((i) => i.attrs.src === '/images/image-unavailable.svg').every((i) => i.attrs.alt === '' && i.attrs.role === 'presentation')).toBe(true);
     expect(byTag(byTag(homeDoc.main, 'section')[0], 'img'), 'the hero has no image').toEqual([]);
   });
 
@@ -1050,7 +1069,7 @@ describe('homepage', () => {
     expect(once('og:description')).toBe(description);
     expect(once('og:url')).toBe(`${SITE}/`);
     expect(once('og:site_name')).toBe('Horror Christmas');
-    expect(once('og:image')).toBe(`${SITE}/images/fallback.svg`);
+    expect(once('og:image')).toBe(`${SITE}/images/image-unavailable.svg`);
     expect(once('twitter:card', 'name')).toBe('summary');
   });
 
@@ -1064,10 +1083,10 @@ describe('homepage', () => {
     expect(site).not.toHaveProperty('potentialAction');
     expect(JSON.stringify(ld)).not.toContain('SearchAction');
     expect(list['@type']).toBe('ItemList');
-    expect(list.numberOfItems).toBe(2);
+    // Equals the VISIBLE featured list (Full Collection is the gift collection, so it is not featured on the page).
+    expect(list.numberOfItems).toBe(1);
     expect(list.itemListElement).toEqual([
       { '@type': 'ListItem', position: 1, name: 'Minimal Collection', url: `${SITE}/collections/minimal-collection/` },
-      { '@type': 'ListItem', position: 2, name: 'Full Collection', url: `${SITE}/collections/full-collection/` },
     ]);
     expectNoEmptyValues(ld, 'home ld+json');
     const locs = new Set(byTag(parseMarkup(await read('sitemap.xml'), 'xml').root, 'loc').map(textOf));
@@ -1078,7 +1097,8 @@ describe('homepage', () => {
     const blob = byTag(homeDoc.body, 'script').find((x) => x.attrs.id === '__PAGE_DATA__')!.children[0] as string;
     const payload = JSON.parse(blob);
     expect(payload.page.type).toBe('home');
-    expect(payload.page.model.featuredCollections.map((c: { slug: string }) => c.slug)).toEqual(['minimal-collection', 'full-collection']);
+    expect(payload.page.model.featuredCollections.map((c: { slug: string }) => c.slug)).toEqual(['minimal-collection']);
+    expect(payload.page.model.giftCollection.slug).toBe('full-collection');
     for (const id of main.fx.ids) expect(blob).not.toContain(id);
     expect(payload.knownMovieSlugs).toEqual([...payload.knownMovieSlugs].sort());
     expect(payload.knownMovieSlugs).toContain('krampus');

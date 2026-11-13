@@ -63,11 +63,11 @@ describe('output layout', () => {
       expect(after, `run ${run + 1}`).toEqual(before);
     }
     const files = await list(out);
-    expect(files).toEqual(expect.arrayContaining([...client, 'sitemap.xml', 'robots.txt', 'images/fallback.svg']));
+    expect(files).toEqual(expect.arrayContaining([...client, 'sitemap.xml', 'robots.txt', 'images/image-unavailable.svg']));
     expect(files.filter((f) => f.endsWith('/index.html')).length).toBe(12);
     // Nothing else: the artifact is pages + the homepage (index.html, Task 7.1) + SEO files + public files + client build.
     expect(files.filter((f) => !f.endsWith('/index.html') && !client.includes(f)).sort()).toEqual(
-      ['images/fallback.svg', 'index.html', 'robots.txt', 'sitemap.xml'],
+      ['images/image-unavailable.svg', 'index.html', 'robots.txt', 'sitemap.xml'],
     );
   });
 

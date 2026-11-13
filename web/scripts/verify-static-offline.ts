@@ -168,8 +168,8 @@ async function main(): Promise<void> {
       const type = m[2] === 'css' ? CONTENT_TYPES['.css'] : CONTENT_TYPES['.js'];
       check(asset.status === 200 && asset.headers.get('content-type') === type && body.length > 100, `200 ${type} ${m[1]} (${body.length} bytes)`);
     }
-    const fallback = await fetch(`${staticServer.origin}/images/fallback.svg`);
-    check(fallback.status === 200, '200 /images/fallback.svg');
+    const fallback = await fetch(`${staticServer.origin}/images/image-unavailable.svg`);
+    check(fallback.status === 200, '200 /images/image-unavailable.svg');
     const one = await get(`/collections/${PREFIX}-collection-one/`);
     check(one.text.indexOf('Offline Movie B') < one.text.indexOf('Offline Movie A'), 'collection items keep their sortOrder (B before A)');
     check(one.text.includes('Watch me first'), 'curator note is rendered');

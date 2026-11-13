@@ -161,7 +161,7 @@ Implemented with provisional choices; the owner may want to revisit them.
 | `og:type` values | ⚠️ Provisional | collection `website`, movie `website` (`video.movie` not used; needs extra properties), character `article`, product `product` |
 | Movie trailer in JSON-LD | ⚠️ Omitted | A valid `VideoObject` needs name, thumbnail and upload date; the API only has a trailer URL |
 | Product `offers` | ⚠️ Provisional | Only with price and currency; no availability claim, since stock is not tracked |
-| Fallback image for pages without one | ✅ Implemented (Task 6.5) | `og:image` is `{SITE_URL}/images/fallback.svg` with a build warning; `twitter:card` is `summary`. SVG preview limitation: see Image delivery below |
+| Fallback image for pages without one | ✅ Implemented (Task 6.5) | `og:image` is `{SITE_URL}/images/image-unavailable.svg` with a build warning; `twitter:card` is `summary`. SVG preview limitation: see Image delivery below |
 
 ## Sitemap and robots.txt (Task 6.4)
 Implemented with provisional choices; the owner may want to revisit them.
@@ -183,8 +183,8 @@ Implemented with provisional choices; the owner may want to revisit them. Detail
 | Object storage / image CDN (R2 vs S3) | ❌ Open | Unchanged. Image URLs are used as the API gives them |
 | Image dimensions | ⚠ Limitation | The API models carry no width/height, so `<img>` has none and pages can shift layout while images load. Needs dimensions from the API or the image pipeline |
 | Alt text for movie and character images | ⚠ Provisional | The models have no alt field; the entity name is used (movie title, character name, product name if `imageAlt` is empty, collection title if `heroImageAlt` is empty). A dedicated alt field per image is an editorial/API decision |
-| Fallback image asset | ⚠ Provisional | `web/public/images/fallback.svg`, a plain neutral placeholder drawn for this task, shown as a decorative image (`alt=""`, `role="presentation"`). Final artwork is a design decision |
-| SVG fallback in link previews (`og:image`) | ❌ Open | `og:image` for entities without an image is `{SITE_URL}/images/fallback.svg`. Some platforms do not render SVG in link previews, so such previews may show no image. A PNG/JPG fallback asset (for example 1200x630) is an owner/design decision; once it exists, change `FALLBACK_IMAGE_PATH` or add a separate og fallback constant |
+| Fallback image asset | ✅ DECIDED by the owner (one placeholder) | `web/public/images/image-unavailable.svg` ("Image unavailable", broken-picture icon, theme colors, 1200x630) is the only placeholder. It replaces `fallback.svg` and is used for no URL, an unusable URL, and a root-relative URL whose file is not under `public/` (substituted at build time, one summary warning). Shown as a decorative image (`alt=""`, `role="presentation"`): every slot has visible text next to it (card title, page h1). Final artwork is still a design decision |
+| SVG fallback in link previews (`og:image`) | ❌ Open | `og:image` for entities without an image (or whose file is missing) is `{SITE_URL}/images/image-unavailable.svg`. Some platforms do not render SVG in link previews, so such previews may show no image. A PNG/JPG fallback asset (for example 1200x630) is an owner/design decision; once it exists, change `FALLBACK_IMAGE_PATH` or add a separate og fallback constant |
 | `twitter:card` for the fallback | ⚠ Provisional | `summary` (small card) when the fallback image is used, `summary_large_image` for an entity's own image |
 | Internal-link order (Req 9.8) | ⚠ Provisional reading | Related collections, then collection items, then characters, movies, products. On entity pages the collections the entity belongs to are the "related collections" and come first. On collection pages the items are movies, characters, products (editorial order kept). DOM order only; visual order is a later design decision. Table in `web/README.md` |
 | Unresolved collection reference | ⚠ Provisional | Rendered as plain text (title kept) with a build warning, not omitted and not failed. The live API already leaves unpublished collections out, so this guards against inconsistent data |
@@ -242,7 +242,7 @@ Owner decisions (routing, styling, components, data cache, palette) are in the t
 | (b) No `/collections` index page | ❌ Open | The header "Collections" link jumps to the homepage's featured collections until the owner decides |
 | (c) Brand / display font | ❌ Open | System font stack for now; no font dependency, nothing hotlinked |
 | (d) Fallback `og:image` is an SVG | ❌ Open | Many social platforms do not render SVG; a PNG or JPG fallback is needed before launch |
-| (e) Seed image files do not exist | ❌ Owner action | Published pages request `/images/...` paths that return 404 until real files (or object-storage URLs) are added. Only `images/fallback.svg` exists |
+| (e) Seed image files do not exist | ⚠ Mitigated, owner action remains | The build now shows the "Image unavailable" placeholder for every root-relative image URL whose file is not in `web/public/`, so pages have no broken images. Add real files under `web/public/images/...` (or use absolute URLs) and the next build picks them up with no code change. Absolute http(s) URLs cannot be checked at build time |
 
 
 ## Homepage (Task 7.1, Part B)
@@ -255,10 +255,10 @@ Details in `web/README.md`, "Homepage".
 | Image priority | ⚠ Decided by implementation | All homepage images are lazy; the hero has no image. Revisit if the design puts an image above the fold |
 | Homepage og:image | ❌ Open | Uses the fallback SVG, so every build emits one standing warning (`home "/": no usable image ...`) and the Twitter card is `summary`. A brand share image (PNG/JPG, see item (d) above) resolves both |
 | `ItemList` / no `SearchAction` | ⚠ Decided by implementation | WebSite + ItemList of featured collections. The sitelinks searchbox (`SearchAction`) is deliberately absent until search exists (Task 7.4) |
-| A collection in several sections | ⚠ Decided by implementation | If `/home` lists a collection as featured and seasonal (and/or as the gift collection) it shows in each section; nothing is deduplicated. The dev data does this for "Winter Monsters" and "Best Gifts For Krampus Fans". Owner may prefer hiding repeats |
-| Character before movie | ⚠ Decided by implementation | Featured character comes before the featured movie in DOM and visually (Req 9.8 order). Req 2.3 lists them the other way round |
+| A collection in several sections | ✅ DECIDED by the owner | Each collection appears at most once on the homepage. The more specific role wins: gift collection, then featured, then seasonal. API order is kept; a section emptied by this is omitted; the build prints one informational line when entries were removed. Presentation rule in `web/` (`src/pages/home-collections.ts`); the server `/home` contract is unchanged (Design 4.2). The dev data repeats "Winter Monsters" and "Best Gifts For Krampus Fans" |
+| Character before movie | ✅ DECIDED by the owner | Featured character comes before the featured movie in DOM and visually. This follows Req 9.8's link-priority order; Req 2.3 lists them the other way round, and the owner chose character first |
 | Section layout | ⚠ Decided by implementation | Featured character, movie and gift each have their own section and h2 (one h2 per section); a combined "also worth a look" row could be tighter |
-| Shell width | ⚠ Known cosmetic gap | Header and footer content use `max-w-5xl`; the homepage content uses `max-w-6xl`, so the brand name and the section edge do not line up on wide screens. Not changed because the shell is shared; the owner's styling pass should settle one width |
+| Shell width | ⚠ Deferred to post-MVP styling (owner) | Header and footer content use `max-w-5xl`; the homepage content uses `max-w-6xl`, so the brand name and the section edge do not line up on wide screens. The owner will fix it after the MVP; deliberately left unchanged |
 | Homepage not generated without content | ⚠ Decided by implementation | With nothing published, no pages (homepage included) and no sitemap are written, as before |
 ### Open items found
 | Item | Status | Notes |

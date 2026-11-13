@@ -20,6 +20,7 @@ import { normalizeSiteUrl } from './site-url';
 import { buildPageHead, type PageModel, type SitePageModel } from './page-head';
 import { missingCollectionWarnings, noCollectionsWarning } from './collection-refs';
 import { homeWarnings } from './home-refs';
+import { dedupeHomeCollections } from '../pages/home-collections';
 import { type RenderContextValue } from '../pages/render-context';
 import { defaultImageSourceResolver, type ImageSourceResolver } from '../pages/image-sources';
 import { App } from '../app/App';
@@ -123,8 +124,13 @@ export function renderSite(
   ];
   // With nothing published there is nothing to show: the homepage is not generated either
   // (so "no published content" still means "write nothing", as before the homepage existed).
+  // Each collection is shown once on the homepage (owner rule, pages/home-collections.ts). The model
+  // is changed HERE, before anything else reads it, so the markup, the embedded hydration data and the
+  // JSON-LD ItemList are all built from the same final lists.
   const pages: SitePageModel[] =
-    data.home && entityPages.length > 0 ? [{ type: 'home', model: data.home }, ...entityPages] : entityPages;
+    data.home && entityPages.length > 0
+      ? [{ type: 'home', model: dedupeHomeCollections(data.home).home }, ...entityPages]
+      : entityPages;
   const context: RenderContextValue = {
     knownCollectionSlugs: new Set(data.collections.map((c) => c.slug)),
     knownMovieSlugs: new Set(data.movies.map((m) => m.slug)),

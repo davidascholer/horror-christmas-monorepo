@@ -238,7 +238,7 @@ describe('renderSite', () => {
       expect(html).not.toContain('<h2');
       // Task 6.5: no image data means the fallback image, the only <img> (was: no <img>).
       expect(html.match(/<img\b[^>]*>/g)).toEqual([
-        '<img src="/images/fallback.svg" alt="" role="presentation" decoding="async" loading="eager" fetchPriority="high"/>',
+        '<img src="/images/image-unavailable.svg" alt="" role="presentation" decoding="async" loading="eager" fetchPriority="high"/>',
       ]);
       expect(html).not.toContain('<ul></ul>');
       expect(count(html, /<h1[\s>]/g)).toBe(1);
@@ -374,7 +374,7 @@ describe('writePages and generateStatic', () => {
       expect(empty.counts.total).toBe(0);
       expect(formatSummary(empty)).toContain('No published content found');
       // Empty build: no pages, no sitemap, but robots.txt is still written.
-      // The static assets (images/fallback.svg, Task 6.5) are copied even with no pages.
+      // The static assets (images/image-unavailable.svg, Task 6.5) are copied even with no pages.
       expect(await readdir(dir + '-none')).toEqual(['images', 'robots.txt']);
     } finally {
       await rm(dir, { recursive: true, force: true });

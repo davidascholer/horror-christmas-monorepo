@@ -18,7 +18,7 @@ describe('homeWarnings', () => {
   it('has nothing to say when /home only references built pages', () => {
     const home: HomeResponse = {
       ...emptyHome(),
-      featuredCollections: [colSummary('cozy-slashers')], seasonalCollections: [colSummary('gift-guide')],
+      featuredCollections: [colSummary('cozy-slashers')], seasonalCollections: [],
       giftCollection: colSummary('gift-guide'), featuredMovie: movieSummary('black-christmas'), featuredCharacter: charSummary('billy'),
     };
     expect(homeWarnings(home, built)).toEqual([]);
@@ -43,13 +43,15 @@ describe('homeWarnings', () => {
       featuredCharacter: charSummary('no-char'),
     };
     const messages = homeWarnings(home, built).map((w) => w.message);
+    // The repeated seasonal 'ghost' is removed first (owner rule: shown once), with ONE informational line.
     expect(messages).toEqual([
+      expect.stringContaining('removed 1 duplicate collection entries (0 from featured, 1 from seasonal)'),
       expect.stringContaining('references collection "ghost" (featured collections)'),
       expect.stringContaining('references collection "ghost-gift" (gift collection)'),
       expect.stringContaining('references character "no-char" (featured character)'),
       expect.stringContaining('references movie "no-movie" (featured movie)'),
     ]);
-    for (const m of messages) expect(m).toContain('plain text');
+    for (const m of messages.slice(1)) expect(m).toContain('plain text');
   });
 });
 
@@ -64,7 +66,7 @@ describe('homepage metadata', () => {
     const tag = (key: string) => m.socialTags.find((t) => t.key === key)?.content;
     expect(tag('og:type')).toBe('website');
     expect(tag('og:url')).toBe(`${SITE}/`);
-    expect(tag('og:image')).toBe(`${SITE}/images/fallback.svg`);
+    expect(tag('og:image')).toBe(`${SITE}/images/image-unavailable.svg`);
     expect(tag('twitter:card')).toBe('summary');
     expect(m.warnings.map((w) => w.message)).toEqual([expect.stringMatching(/^home "\/": no usable image; using fallback image/)]);
   });

@@ -29,7 +29,7 @@ function cleanClientOutput(): Plugin {
 
 export default defineConfig(({ command }) => ({
   plugins: process.env.VITEST ? [react()] : [react(), tailwindcss(), cleanClientOutput()],
-  // The dev server serves public/ (images/fallback.svg). For builds it is off: the static generator
+  // The dev server serves public/ (images/image-unavailable.svg). For builds it is off: the static generator
   // copies public/ into the output (copyPublicAssets), the single mechanism, so there is no double copy.
   publicDir: command === 'serve' ? 'public' : false,
   build: {
